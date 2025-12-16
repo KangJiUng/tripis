@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 body {
+  display: flex;
   margin: 0 auto;
   background-color: rgb(248, 248, 248);
 }
@@ -12,4 +13,31 @@ body {
   background-color: white;
   padding: 0px 15px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 15px 0px;
+}
+
+@theme {
+  --color-black: #000000;
+  --color-inactive: #B7B7B7;
+  --color-border: #E9E9E9;
+}
+
+@layer base {
+  [class*="border"] {
+    border-color: var(--color-border);
+  }
+}
+
+@font-face {
+  font-family: 'Pretendard Variable';
+  src: url('/fonts/PretendardVariable.ttf') format('truetype');
+  font-style: normal;
+  line-height: normal;
+}
+
+@layer components {
+  .text-regular12 {
+    font-family: 'Pretendard Variable';
+    font-size: 12px;
+    font-weight: 400;
+  }
 }
