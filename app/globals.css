@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 body {
   display: flex;
@@ -17,12 +17,12 @@ body {
 
 @theme {
   --color-black: #000000;
-  --color-inactive: #B7B7B7;
-  --color-border: #E9E9E9;
+  --color-inactive: #b7b7b7;
+  --color-border: #e9e9e9;
 }
 
 @layer base {
-  [class*="border"] {
+  [class*='border'] {
     border-color: var(--color-border);
   }
 }
