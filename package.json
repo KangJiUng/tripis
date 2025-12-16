@@ -12,6 +12,7 @@
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.84.0",
     "@tanstack/react-query": "^5.90.11",
+    "framer-motion": "^12.23.26",
     "next": "16.0.7",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -28,6 +29,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.7.4",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
