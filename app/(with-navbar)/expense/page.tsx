@@ -1,3 +1,3 @@
 export default function Page() {
-  return <div></div>
+  return <div>가계부</div>
 }
