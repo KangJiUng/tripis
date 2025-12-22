@@ -6,9 +6,9 @@ export default function ExpenseHeader() {
   return (
     <>
       <header className="fixed top-0 right-0 left-0 z-10 mx-auto flex h-12 max-w-[600px] items-center justify-between bg-white px-4">
-        <div className="w-10" />
-        <div className="text-medium18">가계부</div>
-        <div className="flex items-center gap-4">
+        <div className="w-16" />
+        <div className="text-medium16">가계부</div>
+        <div className="flex w-16 items-center justify-end gap-4">
           <Link href="/notice">
             <BellIcon />
           </Link>
