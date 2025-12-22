@@ -42,7 +42,7 @@ export default function NavBar() {
           <motion.div
             animate={{ rotate: open ? 45 : 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 shadow-md"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-blue-500 shadow-md"
           >
             <PlusIcon />
           </motion.div>
