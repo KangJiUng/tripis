@@ -1,4 +1,4 @@
-import ExpenseHeader from '@/app/components/expense-header';
+import ExpenseHeader from '@/app/components/headers/expense-header';
 
 export default function Page() {
   return (

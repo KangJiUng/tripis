@@ -1,4 +1,4 @@
-import PlanHeader from '@/app/components/plan-header';
+import PlanHeader from '@/app/components/headers/plan-header';
 
 export default function Page() {
   return (

@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import BackIcon from '../icons/back-icon';
-import KebabMenuIcon from '../icons/kebab-menu-icon';
+import BackIcon from '../../icons/back-icon';
+import KebabMenuIcon from '../../icons/kebab-menu-icon';
 
 export default function DetailHeader() {
   const router = useRouter();

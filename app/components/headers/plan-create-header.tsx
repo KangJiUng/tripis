@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import BackIcon from '../icons/back-icon';
+import BackIcon from '../../icons/back-icon';
 
 export default function PlanCreateHeader() {
   const router = useRouter();

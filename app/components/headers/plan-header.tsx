@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import MapIcon from '../icons/map-icon';
-import MenuIcon from '../icons/menu-icon';
+import MapIcon from '../../icons/map-icon';
+import MenuIcon from '../../icons/menu-icon';
 
 interface PlanHeaderProps {
   tripName?: string;

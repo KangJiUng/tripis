@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import BellIcon from '../icons/bell-icon';
-import MenuIcon from '../icons/menu-icon';
+import BellIcon from '../../icons/bell-icon';
+import MenuIcon from '../../icons/menu-icon';
 
 export default function Header() {
   return (

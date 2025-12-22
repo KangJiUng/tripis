@@ -1,4 +1,4 @@
-import WriteHeader from '@/app/components/write-header';
+import WriteHeader from '@/app/components/headers/write-header';
 
 export default function Page() {
   return (
