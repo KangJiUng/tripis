@@ -1,0 +1,7 @@
+export default function BackIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16.0005 3L7.00049 12L16.0005 21" stroke="black" stroke-width="1.71429" />
+    </svg>
+  );
+}
