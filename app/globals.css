@@ -49,6 +49,18 @@ html {
     font-weight: 400;
   }
 
+  .text-regular14 {
+    font-family: 'Pretendard Variable';
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .text-regular16 {
+    font-family: 'Pretendard Variable';
+    font-size: 16px;
+    font-weight: 400;
+  }
+
   .text-medium16 {
     font-family: 'Pretendard Variable';
     font-size: 16px;
@@ -58,6 +70,27 @@ html {
   .text-medium18 {
     font-family: 'Pretendard Variable';
     font-size: 18px;
+    font-weight: 500;
+  }
+}
+
+@font-face {
+  font-family: 'NanumSquareNeo Variable';
+  src: url('/fonts/NanumSquareNeo-Variable.ttf') format('truetype');
+  font-style: normal;
+  line-height: normal;
+}
+
+@layer components {
+  .text-bold16 {
+    font-family: 'NanumSquareNeo Variable';
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .text-extra-bold40 {
+    font-family: 'NanumSquareNeo Variable';
+    font-size: 40px;
     font-weight: 500;
   }
 }
