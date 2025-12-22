@@ -1,3 +1,12 @@
-export default function Page() {
-  return <div></div>
+import DetailHeader from '@/app/components/headers/detail-header';
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  return (
+    <div>
+      <DetailHeader />
+      post {`${id}번 페이지`}
+    </div>
+  );
 }

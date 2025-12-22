@@ -42,12 +42,18 @@ export default function FloatingMenu({ open, onClose }: FloatingMenuProps) {
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
           >
-            <button onClick={goToReview} className="text-regular12 flex w-full items-center gap-2 whitespace-nowrap">
+            <button
+              onClick={goToReview}
+              className="text-regular12 flex w-full cursor-pointer items-center gap-2 whitespace-nowrap"
+            >
               <ReviewCreateIcon className="h-4 w-4" />
               <span>리뷰 작성</span>
             </button>
 
-            <button onClick={goToPost} className="text-regular12 flex w-full items-center gap-2 whitespace-nowrap">
+            <button
+              onClick={goToPost}
+              className="text-regular12 flex w-full cursor-pointer items-center gap-2 whitespace-nowrap"
+            >
               <PostCreateIcon className="h-4 w-4" />
               <span>게시글 작성</span>
             </button>
