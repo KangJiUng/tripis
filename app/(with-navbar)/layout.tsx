@@ -1,7 +1,11 @@
-import { ReactNode } from "react";
-import NavBar from "../components/navbar";
-import Header from "../components/header";
+import { ReactNode } from 'react';
+import NavBar from '../components/navbar';
 
 export default function Layout({ children }: { children: ReactNode }) {
-  return <div><Header />{children}<NavBar /></div>;
+  return (
+    <div>
+      <main>{children}</main>
+      <NavBar />
+    </div>
+  );
 }

@@ -40,4 +40,10 @@ body {
     font-size: 12px;
     font-weight: 400;
   }
+
+  .text-medium18 {
+    font-family: 'Pretendard Variable';
+    font-size: 18px;
+    font-weight: 500;
+  }
 }

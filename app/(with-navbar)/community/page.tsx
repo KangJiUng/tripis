@@ -1,3 +1,10 @@
+import Header from '@/app/components/header';
+
 export default function Page() {
-  return <div>커뮤니티</div>
+  return (
+    <div>
+      <Header />
+      커뮤니티
+    </div>
+  );
 }
