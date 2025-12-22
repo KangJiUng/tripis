@@ -15,7 +15,7 @@ export default function WriteHeader({ title }: WriteHeaderProps) {
       <header className="fixed top-0 right-0 left-0 z-10 mx-auto flex h-12 max-w-[600px] items-center justify-between bg-white px-4">
         <div className="w-10" />
         <div className="text-medium18">{title}</div>
-        <button onClick={() => router.back()}>
+        <button onClick={() => router.back()} className="cursor-pointer">
           <CloseIcon />
         </button>
       </header>
