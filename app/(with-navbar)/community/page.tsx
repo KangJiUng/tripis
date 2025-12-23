@@ -1,4 +1,4 @@
-import Header from '@/app/components/headers/header';
+import Header from '@/components/headers/header';
 
 export default function Page() {
   return (

@@ -1,4 +1,4 @@
-import NoticeHeader from '@/app/components/headers/notice-header';
+import NoticeHeader from '@/components/headers/notice-header';
 
 export default function Page() {
   return (

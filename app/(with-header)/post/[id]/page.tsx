@@ -1,4 +1,4 @@
-import DetailHeader from '@/app/components/headers/detail-header';
+import DetailHeader from '@/components/headers/detail-header';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

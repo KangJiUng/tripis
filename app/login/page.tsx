@@ -1,35 +1,14 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import Logo from '../../public/logo/logo';
+import { redirect } from 'next/navigation';
+import { createSupabaseServer } from '@/lib/supabase/server';
+import Login from '@/components/login';
 
-export default function Page() {
-  return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[600px] flex-col bg-[#5B5FED]">
-      <div className="flex flex-1 flex-col items-center justify-center">
-        <div className="flex items-center gap-1">
-          <div className="-mt-5">
-            <Logo />
-          </div>
-          <div className="flex flex-col leading-tight">
-            <span className="text-bold16 text-white">여행이란, 그래서</span>
-            <span className="text-extra-bold40 text-white">트립이즈</span>
-          </div>
-        </div>
-      </div>
+export default async function LoginPage() {
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase.auth.getUser();
 
-      <div className="mt-7 flex flex-col items-center gap-4 pb-30">
-        <p className="text-regular16 text-white">로그인하고 더 많은 서비스를 사용해보세요!</p>
+  if (data.user) {
+    redirect('/');
+  }
 
-        <div className="mt-5">
-          <button className="cursor-pointer">
-            <Image src="/images/kakao_login.png" alt="카카오 로그인" width={280} height={45} />
-          </button>
-        </div>
-
-        <Link href="/" className="text-regular14 text-gray-200 underline">
-          둘러보기
-        </Link>
-      </div>
-    </div>
-  );
+  return <Login />;
 }
