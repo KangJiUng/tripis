@@ -5,7 +5,7 @@ import { createServerClient } from '@supabase/ssr';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL;
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login`);
@@ -49,11 +49,11 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/login`);
   }
 
-  const { data: existingUser } = await supabase.from('users').select('user_id').eq('user_id', user.id).maybeSingle();
+  const { data: existingUser } = await supabase.from('users').select('id').eq('id', user.id).maybeSingle();
 
   if (!existingUser) {
     await supabase.from('users').insert({
-      user_id: user.id,
+      id: user.id,
       kakao_id: user.user_metadata?.provider_id,
       email: user.email,
       profile_image_url: user.user_metadata?.avatar_url,
