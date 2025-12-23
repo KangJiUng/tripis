@@ -1,4 +1,4 @@
-import Header from '../../components/headers/header';
+import Header from '@/components/headers/header';
 import { redirect } from 'next/navigation';
 import { createSupabaseServer } from '@/lib/supabase/server';
 

@@ -35,5 +35,30 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/login`);
   }
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.redirect(`${origin}/login`);
+  }
+
+  const kakaoNickname = user.user_metadata?.full_name;
+  if (!kakaoNickname) {
+    return NextResponse.redirect(`${origin}/login`);
+  }
+
+  const { data: existingUser } = await supabase.from('users').select('user_id').eq('user_id', user.id).maybeSingle();
+
+  if (!existingUser) {
+    await supabase.from('users').insert({
+      user_id: user.id,
+      kakao_id: user.user_metadata?.provider_id,
+      email: user.email,
+      profile_image_url: user.user_metadata?.avatar_url,
+      nickname: kakaoNickname,
+    });
+  }
+
   return NextResponse.redirect(`${origin}/`);
 }
