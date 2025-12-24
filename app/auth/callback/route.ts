@@ -3,9 +3,9 @@ import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+  const { searchParams, origin: requestOrigin } = new URL(request.url);
   const code = searchParams.get('code');
-  const origin = process.env.NEXT_PUBLIC_SITE_URL;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login`);
@@ -61,5 +61,7 @@ export async function GET(request: Request) {
     });
   }
 
-  return NextResponse.redirect(`${origin}/`);
+  const response = NextResponse.redirect(`${origin}/`);
+  response.headers.set('Cache-Control', 'no-store');
+  return response;
 }

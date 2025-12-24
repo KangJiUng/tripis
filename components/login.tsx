@@ -7,10 +7,14 @@ import { supabase } from '@/lib/supabase/client';
 
 export default function Login() {
   const handleKakaoLogin = async () => {
+    const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL
+      ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
+      : `${window.location.origin}/auth/callback`;
+
     await supabase.auth.signInWithOAuth({
       provider: 'kakao',
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: redirectUrl,
       },
     });
   };
