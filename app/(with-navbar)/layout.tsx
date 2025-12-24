@@ -3,7 +3,7 @@ import NavBar from '../../components/navbar';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="container">
+    <div>
       <main>{children}</main>
       <NavBar />
     </div>
