@@ -1,4 +1,5 @@
 import './globals.css';
+import Sidebar from '@/components/sidebar/sidebar';
 
 export default function RootLayout({
   children,
@@ -7,7 +8,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <div className="relative container overflow-hidden">
+          {children}
+          <Sidebar />
+        </div>
+      </body>
     </html>
   );
 }

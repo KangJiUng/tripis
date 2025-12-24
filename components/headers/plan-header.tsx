@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import MapIcon from '../../icons/map-icon';
 import MenuIcon from '../../icons/menu-icon';
+import { useSidebarStore } from '@/stores/sidebar-store';
 
 interface PlanHeaderProps {
   tripName?: string;
@@ -10,6 +11,7 @@ interface PlanHeaderProps {
 }
 
 export default function PlanHeader({ tripName, tripDate }: PlanHeaderProps) {
+  const open = useSidebarStore((s) => s.open);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -38,7 +40,9 @@ export default function PlanHeader({ tripName, tripDate }: PlanHeaderProps) {
         </div>
         <div className="flex w-16 items-center justify-end gap-4">
           <MapIcon />
-          <MenuIcon />
+          <button onClick={open}>
+            <MenuIcon />
+          </button>
         </div>
       </header>
       <div className="h-12" />
