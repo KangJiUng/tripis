@@ -1,24 +1,8 @@
-'use client';
-
 import Link from 'next/link';
-import Image from 'next/image';
 import Logo from '@/public/logo/logo';
-import { supabase } from '@/lib/supabase/client';
+import KakaoLoginButton from './kakao-login-button';
 
 export default function Login() {
-  const handleKakaoLogin = async () => {
-    const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL
-      ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
-      : `${window.location.origin}/auth/callback`;
-
-    await supabase.auth.signInWithOAuth({
-      provider: 'kakao',
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
-  };
-
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[600px] flex-col bg-[#5B5FED] shadow-[0px_7px_15px_0px_rgba(100,100,111,0.2)]">
       <div className="flex flex-1 flex-col items-center justify-center">
@@ -33,18 +17,18 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="mt-7 flex flex-col items-center gap-4 pb-30">
+      <div className="mt-10 flex flex-col items-center gap-4 pb-30">
         <p className="text-regular16 text-white">로그인하고 더 많은 서비스를 사용해보세요!</p>
 
         <div className="mt-5">
-          <button onClick={handleKakaoLogin} className="cursor-pointer">
-            <Image src="/images/kakao_login.png" alt="카카오 로그인" width={280} height={45} />
-          </button>
+          <KakaoLoginButton />
         </div>
 
-        <Link href="/" className="text-regular14 text-gray-200 underline">
-          둘러보기
-        </Link>
+        <div className="mt-8">
+          <Link href="/" className="text-regular14 text-gray-200 underline">
+            둘러보기
+          </Link>
+        </div>
       </div>
     </div>
   );
