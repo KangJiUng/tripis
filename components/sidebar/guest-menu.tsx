@@ -1,3 +1,9 @@
+import KakaoLoginButton from '../kakao-login-button';
+
 export default function GuestMenu() {
-  return <div>비로그인 ui</div>;
+  return (
+    <div className="flex justify-center">
+      <KakaoLoginButton width={220} />
+    </div>
+  );
 }
