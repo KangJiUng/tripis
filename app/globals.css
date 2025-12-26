@@ -61,6 +61,18 @@ html {
     font-weight: 400;
   }
 
+  .text-medium12 {
+    font-family: 'Pretendard Variable';
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .text-medium14 {
+    font-family: 'Pretendard Variable';
+    font-size: 14px;
+    font-weight: 500;
+  }
+
   .text-medium16 {
     font-family: 'Pretendard Variable';
     font-size: 16px;
@@ -72,6 +84,30 @@ html {
     font-size: 18px;
     font-weight: 500;
   }
+
+  .text-bold12 {
+    font-family: 'Pretendard Variable';
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .text-bold14 {
+    font-family: 'Pretendard Variable';
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .text-bold16 {
+    font-family: 'Pretendard Variable';
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .text-bold18 {
+    font-family: 'Pretendard Variable';
+    font-size: 20px;
+    font-weight: 700;
+  }
 }
 
 @font-face {
@@ -82,13 +118,13 @@ html {
 }
 
 @layer components {
-  .text-bold16 {
+  .text-nanum-regular16 {
     font-family: 'NanumSquareNeo Variable';
     font-size: 16px;
     font-weight: 400;
   }
 
-  .text-extra-bold40 {
+  .text-nanum-medium40 {
     font-family: 'NanumSquareNeo Variable';
     font-size: 40px;
     font-weight: 500;
