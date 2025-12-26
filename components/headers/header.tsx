@@ -44,7 +44,7 @@ export default function Header() {
           <Link href="/notice">
             <BellIcon />
           </Link>
-          <button onClick={open}>
+          <button onClick={open} className="cursor-pointer">
             <MenuIcon />
           </button>
         </div>

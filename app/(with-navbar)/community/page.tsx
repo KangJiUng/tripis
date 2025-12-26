@@ -24,7 +24,7 @@ export default function Page() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as TabType)}
-            className={`text-bold18 py-1 transition ${activeTab === tab.key ? 'text-black' : 'text-gray-400'}`}
+            className={`text-bold18 cursor-pointer py-1 transition ${activeTab === tab.key ? 'text-black' : 'text-gray-400'}`}
           >
             {tab.label}
           </button>

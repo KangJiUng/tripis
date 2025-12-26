@@ -28,7 +28,7 @@ export default function SidebarWrapper({ children }: SidebarWrapperProps) {
           >
             <div>
               <div className="flex justify-end">
-                <button onClick={close}>
+                <button onClick={close} className="cursor-pointer">
                   <CloseIcon />
                 </button>
               </div>
