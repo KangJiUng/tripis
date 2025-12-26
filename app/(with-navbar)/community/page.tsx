@@ -44,7 +44,7 @@ export default function Page() {
             {[...Array(5)].map((_, idx) => (
               <div key={idx}>
                 <ReviewCard />
-                {idx < 4 && <div className="border-b-1 border-[#ececec]" />}
+                {idx < 4 && <div className="border-b border-[#ececec]" />}
               </div>
             ))}
           </section>
