@@ -49,6 +49,12 @@ html {
     font-weight: 400;
   }
 
+  .text-regular13 {
+    font-family: 'Pretendard Variable';
+    font-size: 13px;
+    font-weight: 400;
+  }
+
   .text-regular14 {
     font-family: 'Pretendard Variable';
     font-size: 14px;
@@ -94,6 +100,12 @@ html {
   .text-bold14 {
     font-family: 'Pretendard Variable';
     font-size: 14px;
+    font-weight: 600;
+  }
+
+  .text-bold15 {
+    font-family: 'Pretendard Variable';
+    font-size: 15px;
     font-weight: 600;
   }
 
