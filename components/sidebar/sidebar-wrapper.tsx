@@ -14,25 +14,29 @@ export default function SidebarWrapper({ children }: SidebarWrapperProps) {
 
   return (
     <div
-      className={`absolute inset-0 z-50 transition-opacity duration-300 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+      className={`fixed inset-0 z-50 transition-opacity duration-300 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
     >
-      <div
-        onClick={close}
-        className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
-      />
+      <div className="flex h-full justify-center">
+        <div className="relative h-full w-full max-w-[600px] overflow-hidden">
+          <div
+            onClick={close}
+            className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+          />
 
-      <aside
-        className={`absolute right-0 bottom-0 h-[94%] w-full max-w-[320px] transform bg-white shadow-xl transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} rounded-tl-2xl p-2`}
-      >
-        <div>
-          <div className="flex justify-end">
-            <button onClick={close}>
-              <CloseIcon />
-            </button>
-          </div>
-          {children}
+          <aside
+            className={`absolute right-0 bottom-0 h-[94%] w-full max-w-[320px] transform bg-white shadow-xl transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} rounded-tl-2xl p-2`}
+          >
+            <div>
+              <div className="flex justify-end">
+                <button onClick={close}>
+                  <CloseIcon />
+                </button>
+              </div>
+              {children}
+            </div>
+          </aside>
         </div>
-      </aside>
+      </div>
     </div>
   );
 }
