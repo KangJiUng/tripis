@@ -9,9 +9,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <div className="relative container overflow-hidden">{children}</div>
+        <div className="container">
+          {children} <Sidebar />
+        </div>
       </body>
-      <Sidebar />
     </html>
   );
 }
