@@ -2,7 +2,7 @@ import SearchIcon from '@/icons/search-icon';
 
 export default function SearchBar() {
   return (
-    <div className="flex items-center pt-2 pb-4">
+    <div className="flex items-center pt-2">
       <div className="relative flex h-9 w-full items-center justify-center rounded-[10px] bg-[#efefef]">
         <span className="absolute top-1/2 left-3 -translate-y-1/2">
           <SearchIcon />
