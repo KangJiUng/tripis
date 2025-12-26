@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/headers/header';
 import ReviewCard from '@/components/feed/review-feed/review-card';
 import SearchBar from '@/components/searchbar';
+import CommonCard from '@/components/feed/common-feed/common-card';
 
 type TabType = 'review' | 'question' | 'help' | 'talk';
 
@@ -33,10 +34,12 @@ export default function Page() {
 
       <SearchBar />
 
-      <div className="text-bold12 flex gap-1.5">
-        <button>• 추천순</button>
-        <button>• 최신순</button>
-      </div>
+      {activeTab === 'review' && (
+        <div className="text-bold12 flex gap-1.5 pt-4">
+          <button>• 추천순</button>
+          <button>• 최신순</button>
+        </div>
+      )}
 
       <div className="space-y-4">
         {activeTab === 'review' && (
@@ -51,13 +54,14 @@ export default function Page() {
         )}
 
         {activeTab !== 'review' && (
-          <>
-            {[...Array(5)].map((_, idx) => (
-              <section key={idx} className="flex h-32 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
-                공통 피드 카드
-              </section>
+          <section>
+            {[...Array(10)].map((_, idx) => (
+              <div key={idx}>
+                <CommonCard />
+                {idx < 9 && <div className="border-b border-[#ececec]" />}
+              </div>
             ))}
-          </>
+          </section>
         )}
       </div>
     </div>
