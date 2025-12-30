@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Header from '@/components/headers/header';
 import ReviewCard from '@/components/feed/review-feed/review-card';
-import SearchBar from '@/components/searchbar';
+import FeedSearchBar from '@/components/searchbars/feed-searchbar';
 import CommonCard from '@/components/feed/common-feed/common-card';
 
 type TabType = 'review' | 'question' | 'help' | 'talk';
@@ -32,7 +32,7 @@ export default function Page() {
         ))}
       </div>
 
-      <SearchBar />
+      <FeedSearchBar />
 
       {activeTab === 'review' && (
         <div className="text-bold12 flex gap-1.5 pt-4">
