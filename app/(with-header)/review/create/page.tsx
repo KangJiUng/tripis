@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <div className="flex min-h-screen flex-col">
       <WriteHeader title="리뷰 작성" />
-      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-24">
+      <div className="flex-1 overflow-y-auto px-2 pt-4 pb-24">
         <div className="mb-6">
           <button className="text-regular12 flex h-28 w-28 cursor-pointer items-center justify-center rounded-lg bg-[#ececec] text-gray-400">
             0/10
@@ -33,8 +33,10 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 flex w-full justify-center">
-        <SubmitButton />
+      <div className="fixed bottom-0 left-0 w-full bg-white">
+        <div className="mx-auto max-w-[600px]">
+          <SubmitButton />
+        </div>
       </div>
     </div>
   );

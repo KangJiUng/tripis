@@ -25,7 +25,7 @@ export default function Page() {
 
       {shouldShowSummary && (
         <div className="fixed bottom-12 left-0 z-40 flex w-full justify-center text-center">
-          <div className="text-regular14 mx-4 w-full max-w-[600px] bg-[#e4e6ff] px-4 py-3">
+          <div className="text-regular14 mx-4 w-full max-w-[600px] bg-[#f1f2ff] px-4 py-3">
             {isSingleDay && `${format(startDate!, 'yyyy.MM.dd')} · 당일 일정 (1일)`}
 
             {isRange && `${format(startDate!, 'yyyy.MM.dd')} ~ ${format(endDate!, 'yyyy.MM.dd')} · ${totalDays}일`}
@@ -33,8 +33,10 @@ export default function Page() {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 z-50 flex w-full justify-center">
-        <SubmitButton />
+      <div className="fixed bottom-0 left-0 w-full bg-white">
+        <div className="mx-auto max-w-[600px]">
+          <SubmitButton />
+        </div>
       </div>
     </div>
   );

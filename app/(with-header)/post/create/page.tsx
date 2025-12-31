@@ -53,8 +53,10 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 flex w-full justify-center">
-        <SubmitButton />
+      <div className="fixed bottom-0 left-0 w-full bg-white">
+        <div className="mx-auto max-w-[600px]">
+          <SubmitButton />
+        </div>
       </div>
     </div>
   );
