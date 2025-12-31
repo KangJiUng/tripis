@@ -4,6 +4,7 @@ import { useState } from 'react';
 import locations from '@/data/locations.json';
 import PlanCountrySearchBar from './searchbars/plan-country-searchbar';
 import CloseIcon from '@/icons/close-icon';
+import HorizontalScroll from './horizontal-scroll';
 
 type BaseCity = {
   id: string;
@@ -74,23 +75,22 @@ export default function CountryList() {
   return (
     <div>
       <PlanCountrySearchBar />
-      <div className="overflow-x-auto">
-        <div className="flex gap-2 px-1 py-2.5 whitespace-nowrap">
-          {countryTabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`text-medium12 cursor-pointer rounded-[17px] border px-3 py-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-[#5364FF] bg-[#5364FF] text-white'
-                  : 'border-[#e0e0e0] bg-white text-[#222]'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <HorizontalScroll className="gap-2 px-1 py-2.5">
+        {countryTabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`text-medium12 cursor-pointer rounded-[17px] border px-3 py-2 transition-colors ${
+              activeTab === tab.key
+                ? 'border-[#5364FF] bg-[#5364FF] text-white'
+                : 'border-[#e0e0e0] bg-white text-[#222]'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </HorizontalScroll>
+
       <div className="mt-3 space-y-6">
         {visibleCountryKeys.map((countryKey) => {
           const list = countryDataMap[countryKey];
