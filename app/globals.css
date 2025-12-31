@@ -61,6 +61,12 @@ html {
     font-weight: 400;
   }
 
+  .text-regular15 {
+    font-family: 'Pretendard Variable';
+    font-size: 15px;
+    font-weight: 400;
+  }
+
   .text-regular16 {
     font-family: 'Pretendard Variable';
     font-size: 16px;
