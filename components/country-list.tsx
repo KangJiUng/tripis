@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import locations from '@/data/locations.json';
+import { useSearch } from '@/hooks/useSearch';
 import PlanCountrySearchBar from './searchbars/plan-country-searchbar';
 import CloseIcon from '@/icons/close-icon';
 import HorizontalScroll from './horizontal-scroll';
@@ -72,9 +73,18 @@ export default function CountryList() {
 
   const visibleCountryKeys = activeTab === 'all' ? Object.keys(countryDataMap) : [activeTab];
 
+  const { query, setQuery, isSearching } = useSearch();
+
+  const allCities: City[] = Object.values(countryDataMap).flat();
+
+  const searchedCities: City[] = isSearching
+    ? allCities.filter((city) => city.name.toLowerCase().includes(query.toLowerCase()))
+    : [];
+
   return (
     <div>
-      <PlanCountrySearchBar />
+      <PlanCountrySearchBar value={query} onChange={setQuery} />
+
       <HorizontalScroll className="gap-2 px-1 py-2.5">
         {countryTabs.map((tab) => (
           <button
@@ -92,45 +102,80 @@ export default function CountryList() {
       </HorizontalScroll>
 
       <div className="mt-3 space-y-6">
-        {visibleCountryKeys.map((countryKey) => {
-          const list = countryDataMap[countryKey];
-          if (!list || list.length === 0) return null;
+        {isSearching ? (
+          <div>
+            <div className="text-bold14 mb-2 px-2">검색 결과</div>
 
-          const countryLabel = countryTabs.find((t) => t.key === countryKey)?.label ?? '';
+            <ul className="flex flex-col gap-2">
+              {searchedCities.map((city) => {
+                const isSelected = selectedCities.has(city.id);
 
-          return (
-            <div key={countryKey}>
-              <div className="text-bold14 mb-2 px-2">{countryLabel}</div>
-
-              <ul className="flex flex-col gap-2">
-                {list.map((city) => {
-                  const isSelected = selectedCities.has(city.id);
-
-                  return (
-                    <li key={city.id} className="px-2 py-1">
-                      <div className="flex items-center justify-between">
-                        <div className="text-medium14 flex items-center gap-3">
-                          <div className="h-11 w-11 rounded-full bg-gray-300" />
-                          <span>{city.name}</span>
-                        </div>
-
-                        <button
-                          onClick={() => toggleCity(city.id)}
-                          className={`text-medium12 cursor-pointer rounded-[17px] px-3 py-1.25 ${
-                            isSelected ? 'border border-[#5364FF] bg-white text-[#5364FF]' : 'bg-[#eeeeee] text-[#000]'
-                          }`}
-                        >
-                          {isSelected ? '취소' : '선택'}
-                        </button>
+                return (
+                  <li key={city.id} className="px-2 py-1">
+                    <div className="flex items-center justify-between">
+                      <div className="text-medium14 flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-full bg-gray-300" />
+                        <span>{city.name}</span>
                       </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          );
-        })}
+
+                      <button
+                        onClick={() => toggleCity(city.id)}
+                        className={`text-medium12 cursor-pointer rounded-[17px] px-3 py-1.25 ${
+                          isSelected ? 'border border-[#5364FF] bg-white text-[#5364FF]' : 'bg-[#eeeeee] text-[#000]'
+                        }`}
+                      >
+                        {isSelected ? '취소' : '선택'}
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ) : (
+          visibleCountryKeys.map((countryKey) => {
+            const list = countryDataMap[countryKey];
+            if (!list || list.length === 0) return null;
+
+            const countryLabel = countryTabs.find((t) => t.key === countryKey)?.label ?? '';
+
+            return (
+              <div key={countryKey}>
+                <div className="text-bold14 mb-2 px-2">{countryLabel}</div>
+
+                <ul className="flex flex-col gap-2">
+                  {list.map((city) => {
+                    const isSelected = selectedCities.has(city.id);
+
+                    return (
+                      <li key={city.id} className="px-2 py-1">
+                        <div className="flex items-center justify-between">
+                          <div className="text-medium14 flex items-center gap-3">
+                            <div className="h-11 w-11 rounded-full bg-gray-300" />
+                            <span>{city.name}</span>
+                          </div>
+
+                          <button
+                            onClick={() => toggleCity(city.id)}
+                            className={`text-medium12 cursor-pointer rounded-[17px] px-3 py-1.25 ${
+                              isSelected
+                                ? 'border border-[#5364FF] bg-white text-[#5364FF]'
+                                : 'bg-[#eeeeee] text-[#000]'
+                            }`}
+                          >
+                            {isSelected ? '취소' : '선택'}
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })
+        )}
       </div>
+
       {selectedCityList.length > 0 && (
         <div className="fixed bottom-12 left-0 z-40 flex w-full justify-center">
           <div className="w-full max-w-[600px] bg-[#f1f2ff]">
