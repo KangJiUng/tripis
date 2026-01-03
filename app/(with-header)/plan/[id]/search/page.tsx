@@ -12,7 +12,7 @@ export default function Page() {
     <div className="fixed inset-0 flex justify-center">
       <div className="relative h-full w-full max-w-[600px]">
         <PlanPlaceSearchBar onBack={() => router.back()} onSearchClick={() => router.push(`/plan/${planId}/search`)} />
-        <GoogleMap className="h-full w-full" />
+        장소 검색 페이지
       </div>
     </div>
   );
