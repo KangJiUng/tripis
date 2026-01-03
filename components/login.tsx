@@ -11,8 +11,8 @@ export default function Login() {
             <Logo />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="text-bold16 text-white">여행이란, 그래서</span>
-            <span className="text-extra-bold40 text-white">트립이즈</span>
+            <span className="text-nanum-regular16 text-white">여행이란, 그래서</span>
+            <span className="text-nanum-medium40 text-white">트립이즈</span>
           </div>
         </div>
       </div>
