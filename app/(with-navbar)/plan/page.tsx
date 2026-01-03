@@ -1,5 +1,8 @@
 import PlanHeader from '@/components/headers/plan-header';
+import GoogleMap from '@/components/plan/google-map';
+import PlanDayList from '@/components/plan/plan-day-list';
 import Link from 'next/link';
+import { getTravelDays } from '@/utils/getTravelDays';
 
 type Plan = {
   id: number;
@@ -9,16 +12,28 @@ type Plan = {
 };
 
 export default function Page() {
-  // 🔹 mock 데이터
+  // mock 데이터
   const plans: Plan[] = [
-    // 일정 테스트하려면 주석 해제
     {
       id: 1,
       title: '도쿄 여행',
-      startDate: '2025-01-01',
-      endDate: '2025-01-05',
+      startDate: '2026-01-08',
+      endDate: '2026-01-12',
+    },
+    {
+      id: 2,
+      title: '도쿄 여행',
+      startDate: '2026-03-09',
+      endDate: '2026-03-19',
     },
   ];
+
+  const trip = {
+    startDate: '2026-01-08',
+    endDate: '2026-01-12',
+  };
+
+  const days = getTravelDays(trip.startDate, trip.endDate);
 
   const today = new Date();
 
@@ -30,13 +45,11 @@ export default function Page() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* 헤더는 항상 존재, 값만 조건부 */}
       <PlanHeader
         tripName={nearestPlan?.title}
         tripDate={nearestPlan ? `${nearestPlan.startDate} - ${nearestPlan.endDate}` : undefined}
       />
 
-      {/* 제목/기간: 일정 있을 때만 */}
       {nearestPlan && (
         <div className="p-1">
           <h1 className="text-medium20">{nearestPlan.title}</h1>
@@ -46,15 +59,19 @@ export default function Page() {
         </div>
       )}
 
-      {/* 본문 */}
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex items-center justify-center">
         {nearestPlan ? (
-          <div>{/* 나중에 일정 카드/리스트 들어갈 자리 */}</div>
+          <div className="w-full py-2">
+            <GoogleMap />
+            <PlanDayList days={days} />
+          </div>
         ) : (
           <div className="flex flex-col items-center gap-3">
             <div className="text-regular15">등록된 일정이 없어요. 새 여행 계획을 세워보세요!</div>
-            <button className="text-regular14 rounded-full border px-4 py-2">일정 등록하기</button>
-            <Link href="/" className="text-regular14 text-gray-400 underline">
+            <Link href="/plan/create/date" className="text-regular14 rounded-full border px-4 py-2">
+              일정 등록하기
+            </Link>
+            <Link href="/plan/list" className="text-regular14 text-gray-400 underline">
               지난 일정 보기
             </Link>
           </div>
