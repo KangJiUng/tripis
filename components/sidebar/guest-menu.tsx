@@ -1,4 +1,4 @@
-import KakaoLoginButton from '../kakao-login-button';
+import KakaoLoginButton from '../buttons/kakao-login-button';
 
 export default function GuestMenu() {
   return (

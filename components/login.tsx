@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Logo from '@/public/logo/logo';
-import KakaoLoginButton from './kakao-login-button';
+import KakaoLoginButton from './buttons/kakao-login-button';
 
 export default function Login() {
   return (

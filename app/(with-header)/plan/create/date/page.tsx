@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Calendar from '@/components/calendar/calendar';
 import PlanCreateHeader from '@/components/headers/plan-create-header';
-import SubmitButton from '@/components/submit-button';
+import SubmitButton from '@/components/buttons/submit-button';
 import { differenceInCalendarDays, format } from 'date-fns';
 
 export default function Page() {

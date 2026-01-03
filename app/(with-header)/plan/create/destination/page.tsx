@@ -1,6 +1,6 @@
 import CountryList from '@/components/country-list';
 import PlanCreateHeader from '@/components/headers/plan-create-header';
-import SubmitButton from '@/components/submit-button';
+import SubmitButton from '@/components/buttons/submit-button';
 
 export default function Page() {
   return (
