@@ -8,21 +8,32 @@ import { useSidebarStore } from '@/stores/sidebar-store';
 interface PlanHeaderProps {
   tripName?: string;
   tripDate?: string;
+  scrollRootRef: React.RefObject<HTMLDivElement | null>;
+  titleRef: React.RefObject<HTMLElement | null>;
 }
 
-export default function PlanHeader({ tripName, tripDate }: PlanHeaderProps) {
+export default function PlanHeader({ tripName, tripDate, scrollRootRef, titleRef }: PlanHeaderProps) {
   const open = useSidebarStore((s) => s.open);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // 100px 이상 스크롤하면 여행 정보 표시
-      setIsScrolled(window.scrollY > 100);
-    };
+    if (!scrollRootRef.current || !titleRef.current) return;
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // 제목이 스크롤 컨테이너 밖으로 나가면 true
+        setIsScrolled(!entry.isIntersecting);
+      },
+      {
+        root: scrollRootRef.current,
+        threshold: 0,
+      },
+    );
+
+    observer.observe(titleRef.current);
+
+    return () => observer.disconnect();
+  }, [scrollRootRef, titleRef]);
 
   return (
     <>
@@ -45,6 +56,7 @@ export default function PlanHeader({ tripName, tripDate }: PlanHeaderProps) {
           </button>
         </div>
       </header>
+
       <div className="h-12" />
     </>
   );

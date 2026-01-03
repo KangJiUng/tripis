@@ -1,5 +1,5 @@
 import WriteHeader from '@/components/headers/write-header';
-import SubmitButton from '@/components/submit-button';
+import SubmitButton from '@/components/buttons/submit-button';
 import PostCountrySearchBar from '@/components/searchbars/post-country-searchbar';
 
 export default function Page() {

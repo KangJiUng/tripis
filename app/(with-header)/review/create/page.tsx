@@ -1,5 +1,5 @@
 import WriteHeader from '@/components/headers/write-header';
-import SubmitButton from '@/components/submit-button';
+import SubmitButton from '@/components/buttons/submit-button';
 
 export default function Page() {
   return (
@@ -28,8 +28,8 @@ export default function Page() {
         </div>
 
         <div className="flex gap-3">
-          <button className="rounded-full border px-4 py-2 text-sm">일정 불러오기</button>
-          <button className="rounded-full border px-4 py-2 text-sm">일정 직접 등록</button>
+          <button className="regular14 rounded-full border px-4 py-2">일정 불러오기</button>
+          <button className="regular14 rounded-full border px-4 py-2">일정 직접 등록</button>
         </div>
       </div>
 

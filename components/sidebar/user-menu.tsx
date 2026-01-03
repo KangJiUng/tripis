@@ -1,4 +1,4 @@
-import LogoutButtonTest from '../logout-button-test';
+import LogoutButtonTest from '../buttons/logout-button-test';
 
 export default function UserMenu() {
   return (
