@@ -18,7 +18,7 @@ export default function Page() {
       id: 1,
       title: '도쿄 여행',
       startDate: '2026-01-08',
-      endDate: '2026-01-12',
+      endDate: '2026-01-22',
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ export default function Page() {
 
   const trip = {
     startDate: '2026-01-08',
-    endDate: '2026-01-12',
+    endDate: '2026-01-22',
   };
 
   const days = getTravelDays(trip.startDate, trip.endDate);
@@ -51,7 +51,7 @@ export default function Page() {
       />
 
       {nearestPlan && (
-        <div className="p-1">
+        <div className="shrink-0 p-1">
           <h1 className="text-medium20">{nearestPlan.title}</h1>
           <p className="text-regular15 text-gray-500">
             {nearestPlan.startDate} - {nearestPlan.endDate}
@@ -59,14 +59,14 @@ export default function Page() {
         </div>
       )}
 
-      <div className="flex items-center justify-center">
+      <div className="flex-1 overflow-y-auto">
         {nearestPlan ? (
           <div className="w-full py-2">
             <GoogleMap />
             <PlanDayList days={days} />
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex min-h-full flex-col items-center justify-center gap-3">
             <div className="text-regular15">등록된 일정이 없어요. 새 여행 계획을 세워보세요!</div>
             <Link href="/plan/create/date" className="text-regular14 rounded-full border px-4 py-2">
               일정 등록하기
