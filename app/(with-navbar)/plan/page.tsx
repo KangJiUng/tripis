@@ -62,7 +62,7 @@ export default function Page() {
       <div className="flex-1 overflow-y-auto">
         {nearestPlan ? (
           <div className="w-full py-2">
-            <GoogleMap />
+            <GoogleMap className="h-[200px] w-full" />
             <PlanDayList days={days} />
           </div>
         ) : (

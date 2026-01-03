@@ -7,11 +7,11 @@ const center = {
   lng: 139.767125,
 };
 
-export default function GoogleMap() {
+export default function GoogleMap({ className }: { className: string }) {
   return (
     <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
       <Map
-        mapContainerClassName="w-full h-[200px]"
+        mapContainerClassName={className}
         center={center}
         zoom={7}
         options={{
