@@ -1,6 +1,5 @@
 'use client';
 
-import GoogleMap from '@/components/plan/google-map';
 import PlanPlaceSearchBar from '@/components/searchbars/plan-place-searchbar';
 import { useRouter, useParams } from 'next/navigation';
 
