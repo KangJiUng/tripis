@@ -4,8 +4,18 @@ import PlanCountrySearchBar from './searchbars/plan-country-searchbar';
 import CloseIcon from '@/icons/close-icon';
 import HorizontalScroll from './horizontal-scroll';
 import { useCountrySearch } from '@/hooks/useCountrySearch';
+import { useEffect } from 'react';
 
-export default function CountryList() {
+type City = {
+  id: string;
+  name: string;
+};
+
+interface Props {
+  onChangeSelected?: (cities: City[]) => void;
+}
+
+export default function CountryList({ onChangeSelected }: Props) {
   const {
     query,
     activeTab,
@@ -18,6 +28,10 @@ export default function CountryList() {
     setActiveTab,
     toggleCity,
   } = useCountrySearch();
+
+  useEffect(() => {
+    onChangeSelected?.(selectedCities);
+  }, [selectedCities, onChangeSelected]);
 
   return (
     <div>

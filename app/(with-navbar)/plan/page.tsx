@@ -20,18 +20,18 @@ export default function Page() {
 
   // mock 데이터
   const plans: Plan[] = [
-    {
-      id: 1,
-      title: '도쿄 여행',
-      startDate: '2026-01-08',
-      endDate: '2026-01-22',
-    },
-    {
-      id: 2,
-      title: '도쿄 여행',
-      startDate: '2026-03-09',
-      endDate: '2026-03-19',
-    },
+    // {
+    //   id: 1,
+    //   title: '도쿄 여행',
+    //   startDate: '2026-01-08',
+    //   endDate: '2026-01-22',
+    // },
+    // {
+    //   id: 2,
+    //   title: '도쿄 여행',
+    //   startDate: '2026-03-09',
+    //   endDate: '2026-03-19',
+    // },
   ];
 
   const trip = {
@@ -78,7 +78,7 @@ export default function Page() {
         ) : (
           <div className="flex min-h-full flex-col items-center justify-center gap-3">
             <div className="text-regular15">등록된 일정이 없어요. 새 여행 계획을 세워보세요!</div>
-            <Link href="/plan/create/date" className="text-regular14 rounded-full border px-4 py-2">
+            <Link href="/plan/create/destination" className="text-regular14 rounded-full border px-4 py-2">
               일정 등록하기
             </Link>
             <Link href="/plan/list" className="text-regular14 text-gray-400 underline">
