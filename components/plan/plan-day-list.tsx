@@ -5,11 +5,11 @@ import PlanDay from './plan-day';
 
 interface Props {
   days: Date[];
+  planId: string;
 }
 
-export default function PlanDayList({ days }: Props) {
+export default function PlanDayList({ days, planId }: Props) {
   const router = useRouter();
-  const { planId } = useParams();
 
   return (
     <div>
@@ -18,7 +18,7 @@ export default function PlanDayList({ days }: Props) {
           key={date.toISOString()}
           dayIndex={index + 1}
           date={date}
-          onAddPlace={() => router.push(`/plan/${planId}/map`)}
+          onAddPlace={() => router.push(`/plan/${planId}/map?day=${index + 1}`)}
         />
       ))}
     </div>

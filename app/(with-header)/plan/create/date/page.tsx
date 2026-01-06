@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Calendar from '@/components/calendar/calendar';
 import PlanCreateHeader from '@/components/headers/plan-create-header';
 import SubmitButton from '@/components/buttons/submit-button';
 import { differenceInCalendarDays, format } from 'date-fns';
+import { allCities } from '@/utils/countryData';
 
 export default function Page() {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -14,6 +16,35 @@ export default function Page() {
   const isRange = startDate && endDate && startDate.getTime() !== endDate.getTime();
   const shouldShowSummary = Boolean(startDate);
   const totalDays = startDate && endDate ? differenceInCalendarDays(endDate, startDate) + 1 : startDate ? 1 : 0;
+
+  const searchParams = useSearchParams();
+  const country = searchParams.get('country');
+
+  const handleCreatePlan = async () => {
+    if (!startDate || !country) return;
+
+    const finalEndDate = endDate ?? startDate;
+
+    const city = allCities.find((c) => c.id === country);
+    const title = city ? `${city.name} 여행` : '여행';
+
+    const res = await fetch('/api/plans', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        country,
+        startDate: startDate.toISOString().slice(0, 10),
+        endDate: finalEndDate.toISOString().slice(0, 10),
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.planId) {
+      window.location.href = `/plan`;
+    }
+  };
 
   return (
     <div>
@@ -35,7 +66,7 @@ export default function Page() {
 
       <div className="fixed bottom-0 left-0 w-full bg-white">
         <div className="mx-auto max-w-[600px]">
-          <SubmitButton />
+          <SubmitButton text="선택 완료" disabled={!startDate} onClick={handleCreatePlan} />
         </div>
       </div>
     </div>

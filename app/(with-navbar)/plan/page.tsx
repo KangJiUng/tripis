@@ -1,59 +1,62 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import PlanHeader from '@/components/headers/plan-header';
 import GoogleMap from '@/components/plan/google-map';
 import PlanDayList from '@/components/plan/plan-day-list';
 import Link from 'next/link';
 import { getTravelDays } from '@/utils/getTravelDays';
+import { allCities } from '@/utils/countryData';
 
 type Plan = {
-  id: number;
+  plan_id: string;
   title: string;
-  startDate: string;
-  endDate: string;
+  country: string;
+  start_date: string;
+  end_date: string;
 };
 
 export default function Page() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-
-  // mock 데이터
-  const plans: Plan[] = [
-    {
-      id: 1,
-      title: '도쿄 여행',
-      startDate: '2026-01-08',
-      endDate: '2026-01-22',
-    },
-    {
-      id: 2,
-      title: '도쿄 여행',
-      startDate: '2026-03-09',
-      endDate: '2026-03-19',
-    },
-  ];
-
-  const trip = {
-    startDate: '2026-01-08',
-    endDate: '2026-01-22',
-  };
-
-  const days = getTravelDays(trip.startDate, trip.endDate);
+  const [plans, setPlans] = useState<Plan[]>([]);
 
   const today = new Date();
 
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const res = await fetch('/api/plans');
+      if (!res.ok) return;
+
+      const data = await res.json();
+      setPlans(data.plans ?? []);
+    };
+
+    fetchPlans();
+  }, []);
+
   const futurePlans = plans
-    .filter((plan) => new Date(plan.startDate) >= today)
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+    .filter((plan) => new Date(plan.start_date) >= today)
+    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
   const nearestPlan = futurePlans[0];
+
+  const days = nearestPlan ? getTravelDays(nearestPlan.start_date, nearestPlan.end_date) : [];
+
+  const mapCenter = (() => {
+    if (!nearestPlan) return { lat: 35.681236, lng: 139.767125 }; // fallback
+
+    const city = allCities.find((c) => c.id === nearestPlan.country);
+    if (!city) return { lat: 35.681236, lng: 139.767125 };
+
+    return { lat: city.lat, lng: city.lng };
+  })();
 
   return (
     <div className="flex h-full flex-col">
       <PlanHeader
         tripName={nearestPlan?.title}
-        tripDate={nearestPlan ? `${nearestPlan.startDate} - ${nearestPlan.endDate}` : undefined}
+        tripDate={nearestPlan ? `${nearestPlan.start_date} - ${nearestPlan.end_date}` : undefined}
         scrollRootRef={scrollRef}
         titleRef={titleRef}
       />
@@ -66,19 +69,19 @@ export default function Page() {
                 {nearestPlan.title}
               </h1>
               <p className="text-regular15 text-gray-500">
-                {nearestPlan.startDate} - {nearestPlan.endDate}
+                {nearestPlan.start_date} - {nearestPlan.end_date}
               </p>
             </div>
 
             <div className="w-full py-2">
-              <GoogleMap className="h-[200px] w-full" />
-              <PlanDayList days={days} />
+              <GoogleMap className="h-[200px] w-full" center={mapCenter} />
+              <PlanDayList days={days} planId={nearestPlan.plan_id} />
             </div>
           </>
         ) : (
           <div className="flex min-h-full flex-col items-center justify-center gap-3">
             <div className="text-regular15">등록된 일정이 없어요. 새 여행 계획을 세워보세요!</div>
-            <Link href="/plan/create/date" className="text-regular14 rounded-full border px-4 py-2">
+            <Link href="/plan/create/destination" className="text-regular14 rounded-full border px-4 py-2">
               일정 등록하기
             </Link>
             <Link href="/plan/list" className="text-regular14 text-gray-400 underline">
