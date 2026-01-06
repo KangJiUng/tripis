@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import PlanPlaceSearchBar from '@/components/searchbars/plan-place-searchbar';
 import { useSearch } from '@/hooks/useSearch';
+import SubmitButton from '@/components/buttons/submit-button';
 
 type Place = {
   id: string;
@@ -17,6 +18,8 @@ type Place = {
 export default function Page() {
   const router = useRouter();
   const { id: planId } = useParams();
+  const searchParams = useSearchParams();
+  const dayIndex = searchParams.get('day');
 
   const { query, setQuery, isSearching } = useSearch();
   const [places, setPlaces] = useState<Place[]>([]);
@@ -39,13 +42,38 @@ export default function Page() {
 
     setLoading(true);
 
-    fetch(`/api/places?query=${encodeURIComponent(query)}`)
+    fetch(`/api/search/places?query=${encodeURIComponent(query)}`)
       .then((res) => res.json())
       .then((data) => {
         setPlaces(data.places ?? []);
       })
       .finally(() => setLoading(false));
   }, [query, isSearching]);
+
+  const handleAddPlaces = async () => {
+    if (!dayIndex || selectedPlaceIds.length === 0) return;
+
+    try {
+      const res = await fetch('/api/search/places', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planId,
+          dayIndex,
+          placeIds: selectedPlaceIds,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('장소 추가 실패');
+      }
+
+      router.replace(`/plan`);
+    } catch (error) {
+      console.error(error);
+      alert('장소 추가 중 오류가 발생했습니다.');
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex justify-center bg-gray-50">
@@ -83,6 +111,15 @@ export default function Page() {
               </li>
             ))}
           </ul>
+        </div>
+        <div className="fixed bottom-0 left-0 w-full bg-white">
+          <div className="mx-auto max-w-[600px]">
+            <SubmitButton
+              text={`day ${dayIndex} 일정에 ${selectedPlaceIds.length}개의 장소 추가`}
+              disabled={selectedPlaceIds.length === 0}
+              onClick={handleAddPlaces}
+            />
+          </div>
         </div>
       </div>
     </div>
