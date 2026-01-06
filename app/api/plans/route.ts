@@ -73,7 +73,7 @@ export async function GET() {
   // 2. 현재 유저의 여행 일정 조회
   const { data: plans, error } = await supabase
     .from('travel_plan')
-    .select('plan_id, title, start_date, end_date')
+    .select('plan_id, title, country, start_date, end_date')
     .eq('user_id', user.id)
     .order('start_date', { ascending: true });
 
