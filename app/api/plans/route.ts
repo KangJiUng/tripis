@@ -56,3 +56,30 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ planId: plan.plan_id });
 }
+
+export async function GET() {
+  const supabase = await createSupabaseServer();
+
+  // 1. 로그인 유저 확인
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (!user || authError) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // 2. 현재 유저의 여행 일정 조회
+  const { data: plans, error } = await supabase
+    .from('travel_plan')
+    .select('plan_id, title, start_date, end_date')
+    .eq('user_id', user.id)
+    .order('start_date', { ascending: true });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ plans });
+}
