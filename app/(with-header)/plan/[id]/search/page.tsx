@@ -17,7 +17,8 @@ type Place = {
 
 export default function Page() {
   const router = useRouter();
-  const { id: planId } = useParams();
+  const { id } = useParams();
+  const planId = Array.isArray(id) ? id[0] : id;
   const searchParams = useSearchParams();
   const dayIndex = searchParams.get('day');
 
@@ -54,7 +55,7 @@ export default function Page() {
     if (!dayIndex || selectedPlaceIds.length === 0) return;
 
     try {
-      const res = await fetch('/api/search/places', {
+      const res = await fetch('/api/places', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

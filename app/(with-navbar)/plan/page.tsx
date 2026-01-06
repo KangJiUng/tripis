@@ -6,10 +6,12 @@ import GoogleMap from '@/components/plan/google-map';
 import PlanDayList from '@/components/plan/plan-day-list';
 import Link from 'next/link';
 import { getTravelDays } from '@/utils/getTravelDays';
+import { allCities } from '@/utils/countryData';
 
 type Plan = {
   plan_id: string;
   title: string;
+  country: string;
   start_date: string;
   end_date: string;
 };
@@ -41,6 +43,15 @@ export default function Page() {
 
   const days = nearestPlan ? getTravelDays(nearestPlan.start_date, nearestPlan.end_date) : [];
 
+  const mapCenter = (() => {
+    if (!nearestPlan) return { lat: 35.681236, lng: 139.767125 }; // fallback
+
+    const city = allCities.find((c) => c.id === nearestPlan.country);
+    if (!city) return { lat: 35.681236, lng: 139.767125 };
+
+    return { lat: city.lat, lng: city.lng };
+  })();
+
   return (
     <div className="flex h-full flex-col">
       <PlanHeader
@@ -63,8 +74,8 @@ export default function Page() {
             </div>
 
             <div className="w-full py-2">
-              <GoogleMap className="h-[200px] w-full" />
-              <PlanDayList days={days} />
+              <GoogleMap className="h-[200px] w-full" center={mapCenter} />
+              <PlanDayList days={days} planId={nearestPlan.plan_id} />
             </div>
           </>
         ) : (

@@ -1,11 +1,7 @@
 'use client';
 
 import { GoogleMap as Map, LoadScript } from '@react-google-maps/api';
-
-type LatLng = {
-  lat: number;
-  lng: number;
-};
+import type { LatLng } from '@/types';
 
 export default function GoogleMap({ className, center }: { className: string; center: LatLng }) {
   return (

@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   // 3. travel_day 조회
   const { data: day, error: dayError } = await supabase
     .from('travel_day')
-    .select('id')
+    .select('day_id')
     .eq('plan_id', planId)
     .eq('day_index', Number(dayIndex))
     .single();
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   const { data: lastPlace } = await supabase
     .from('travel_place')
     .select('order_index')
-    .eq('day_id', day.id)
+    .eq('day_id', day.day_id)
     .order('order_index', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
 
   // 6. insert payload 생성
   const rows = selectedPlaces.map((p, idx) => ({
-    day_id: day.id,
+    day_id: day.day_id,
     title: p.name,
     address: p.formatted_address,
     latitude: p.geometry.location.lat,
