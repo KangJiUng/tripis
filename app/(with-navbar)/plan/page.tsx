@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import PlanHeader from '@/components/headers/plan-header';
 import GoogleMap from '@/components/plan/google-map';
 import PlanDayList from '@/components/plan/plan-day-list';
@@ -8,52 +8,44 @@ import Link from 'next/link';
 import { getTravelDays } from '@/utils/getTravelDays';
 
 type Plan = {
-  id: number;
+  plan_id: string;
   title: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
 };
 
 export default function Page() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-
-  // mock 데이터
-  const plans: Plan[] = [
-    // {
-    //   id: 1,
-    //   title: '도쿄 여행',
-    //   startDate: '2026-01-08',
-    //   endDate: '2026-01-22',
-    // },
-    // {
-    //   id: 2,
-    //   title: '도쿄 여행',
-    //   startDate: '2026-03-09',
-    //   endDate: '2026-03-19',
-    // },
-  ];
-
-  const trip = {
-    startDate: '2026-01-08',
-    endDate: '2026-01-22',
-  };
-
-  const days = getTravelDays(trip.startDate, trip.endDate);
+  const [plans, setPlans] = useState<Plan[]>([]);
 
   const today = new Date();
 
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const res = await fetch('/api/plans');
+      if (!res.ok) return;
+
+      const data = await res.json();
+      setPlans(data.plans ?? []);
+    };
+
+    fetchPlans();
+  }, []);
+
   const futurePlans = plans
-    .filter((plan) => new Date(plan.startDate) >= today)
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+    .filter((plan) => new Date(plan.start_date) >= today)
+    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
   const nearestPlan = futurePlans[0];
+
+  const days = nearestPlan ? getTravelDays(nearestPlan.start_date, nearestPlan.end_date) : [];
 
   return (
     <div className="flex h-full flex-col">
       <PlanHeader
         tripName={nearestPlan?.title}
-        tripDate={nearestPlan ? `${nearestPlan.startDate} - ${nearestPlan.endDate}` : undefined}
+        tripDate={nearestPlan ? `${nearestPlan.start_date} - ${nearestPlan.end_date}` : undefined}
         scrollRootRef={scrollRef}
         titleRef={titleRef}
       />
@@ -66,7 +58,7 @@ export default function Page() {
                 {nearestPlan.title}
               </h1>
               <p className="text-regular15 text-gray-500">
-                {nearestPlan.startDate} - {nearestPlan.endDate}
+                {nearestPlan.start_date} - {nearestPlan.end_date}
               </p>
             </div>
 
