@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServer } from '@/lib/supabase/server';
 
-export async function GET(req: Request, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
   if (!id) {
     return NextResponse.json({ error: 'Missing plan id' }, { status: 400 });
