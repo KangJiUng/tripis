@@ -1,12 +1,26 @@
 'use client';
 
+import PlanPlaceItem from './plan-place-item';
+
+interface Place {
+  place_id: string;
+  title: string;
+  address: string;
+  primary_type?: string;
+  latitude: number;
+  longitude: number;
+  memo: string | null;
+  order_index: number;
+}
+
 interface Props {
   dayIndex: number;
   date: Date;
+  places: Place[];
   onAddPlace?: () => void;
 }
 
-export default function PlanDay({ dayIndex, date, onAddPlace }: Props) {
+export default function PlanDay({ dayIndex, date, places, onAddPlace }: Props) {
   const formatted = `${date.getMonth() + 1}.${date.getDate()}`;
   const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
 
@@ -19,6 +33,23 @@ export default function PlanDay({ dayIndex, date, onAddPlace }: Props) {
             {formatted}/{dayOfWeek}
           </span>
         </h3>
+      </div>
+
+      <div className="mt-3 space-y-2">
+        {places.length === 0 ? (
+          <div className="text-regular14 rounded border border-dashed py-3 text-center text-gray-400">
+            아직 추가된 장소가 없어요
+          </div>
+        ) : (
+          places.map((place) => (
+            <PlanPlaceItem
+              key={place.place_id}
+              order={place.order_index}
+              title={place.title}
+              primaryType={place.primary_type}
+            />
+          ))
+        )}
       </div>
 
       <div className="mt-3 flex justify-center gap-2 text-center">

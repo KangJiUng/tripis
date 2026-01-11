@@ -59,6 +59,7 @@ export async function POST(req: Request) {
     address: p.formatted_address,
     latitude: p.geometry.location.lat,
     longitude: p.geometry.location.lng,
+    primary_type: p.primary_type,
     order_index: startOrder + idx,
   }));
 

@@ -7,10 +7,10 @@ import { useSearch } from '@/hooks/useSearch';
 import SubmitButton from '@/components/buttons/submit-button';
 
 type Place = {
-  id: string;
+  place_id: string;
   name: string;
   address: string;
-  category?: string;
+  primary_type?: string;
   latitude: number;
   longitude: number;
 };
@@ -90,24 +90,24 @@ export default function Page() {
 
           <ul>
             {places.map((place) => (
-              <li key={place.id} className="flex items-center justify-between py-2">
+              <li key={place.place_id} className="flex items-center justify-between py-2">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-full bg-gray-200" />
                   <div>
                     <div className="text-medium14">{place.name}</div>
-                    <div className="text-regular13 text-gray-500">{place.category ?? place.address}</div>
+                    <div className="text-regular13 text-gray-500">{place.primary_type ?? place.address}</div>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => togglePlace(place.id)}
+                  onClick={() => togglePlace(place.place_id)}
                   className={`text-regular12 cursor-pointer rounded-[17px] px-3 py-1.25 transition-colors ${
-                    isSelected(place.id)
+                    isSelected(place.place_id)
                       ? 'border border-[#5364FF] bg-white text-[#5364FF]'
                       : 'bg-[#eeeeee] text-[#000]'
                   }`}
                 >
-                  {isSelected(place.id) ? '취소' : '선택'}
+                  {isSelected(place.place_id) ? '취소' : '선택'}
                 </button>
               </li>
             ))}
