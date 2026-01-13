@@ -14,10 +14,22 @@ interface Props {
   planId: string;
   onMoved?: () => void;
   isEditing?: boolean;
+  onSelectionChange?: (dayIndex: number, selectedIds: string[]) => void;
 }
 
-/* 각 장소 카드를 Sortable로 감싸기 */
-function SortablePlaceItem({ place, order, isEditing }: { place: Place; order: number; isEditing: boolean }) {
+function SortablePlaceItem({
+  place,
+  order,
+  isEditing,
+  onToggleSelected,
+  isSelected,
+}: {
+  place: Place;
+  order: number;
+  isEditing: boolean;
+  onToggleSelected: () => void;
+  isSelected: boolean;
+}) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id: place.place_id,
     disabled: !isEditing,
@@ -38,14 +50,29 @@ function SortablePlaceItem({ place, order, isEditing }: { place: Place; order: n
         isEditing={isEditing}
         setActivatorNodeRef={setActivatorNodeRef}
         dragHandleProps={isEditing ? { ...attributes, ...listeners } : undefined}
+        isSelected={isSelected}
+        onToggleSelected={onToggleSelected}
       />
     </div>
   );
 }
 
-export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing = false }: Props) {
+export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing = false, onSelectionChange }: Props) {
   const formatted = `${date.getMonth() + 1}.${date.getDate()}`;
   const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleAll = () => {
+    setSelectedIds((prev) => (prev.length === places.length ? [] : places.map((p) => p.place_id)));
+  };
+  const toggleOne = (id: string) => {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
+  // 선택 변경 부모로 전달
+  useEffect(() => {
+    onSelectionChange?.(dayIndex, selectedIds);
+  }, [dayIndex, selectedIds, onSelectionChange]);
 
   return (
     <section className="py-4">
@@ -65,15 +92,28 @@ export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing 
           </div>
         ) : (
           places.map((place, index) => (
-            <SortablePlaceItem key={place.place_id} place={place} order={index + 1} isEditing={isEditing} />
+            <SortablePlaceItem
+              key={place.place_id}
+              place={place}
+              order={index + 1}
+              isEditing={isEditing}
+              onToggleSelected={() => toggleOne(place.place_id)}
+              isSelected={selectedIds.includes(place.place_id)}
+            />
           ))
         )}
       </div>
 
       <div className="mt-3 flex justify-center gap-2 text-center">
-        <button onClick={onAddPlace} className="text-regular14 flex-1 cursor-pointer rounded border py-2">
-          장소 추가
-        </button>
+        {isEditing ? (
+          <button onClick={toggleAll} className="text-regular14 flex-1 cursor-pointer rounded border py-2">
+            일차 전체 선택
+          </button>
+        ) : (
+          <button onClick={onAddPlace} className="text-regular14 flex-1 cursor-pointer rounded border py-2">
+            장소 추가
+          </button>
+        )}
       </div>
     </section>
   );

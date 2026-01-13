@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 interface Props {
   order: number;
   title: string;
@@ -7,6 +9,8 @@ interface Props {
   isEditing?: boolean;
   dragHandleProps?: any;
   setActivatorNodeRef?: (element: HTMLElement | null) => void;
+  isSelected?: boolean;
+  onToggleSelected?: () => void;
 }
 
 export default function PlanPlaceItem({
@@ -16,12 +20,28 @@ export default function PlanPlaceItem({
   isEditing,
   dragHandleProps,
   setActivatorNodeRef,
+  isSelected,
+  onToggleSelected,
 }: Props) {
+  const [internalSelected, setInternalSelected] = useState(false);
+  const selected = isSelected ?? internalSelected;
+  const toggle = onToggleSelected ?? (() => setInternalSelected((v) => !v));
   return (
     <div className="flex items-start gap-3">
       <div className="relative flex shrink-0 items-start">
         {isEditing ? (
-          <button className="mt-2.5 mr-2 h-6 w-6 rounded-full border" />
+          <button
+            className={`mt-2.5 mr-2 h-6 w-6 rounded-full border ${selected ? 'bg-[#6B5CFF]' : 'bg-white'} flex items-center justify-center`}
+            onClick={toggle}
+            aria-pressed={selected}
+            aria-label="장소 선택"
+          >
+            {selected && (
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                <path d="M7.5 13.5L4.5 10.5L3 12L7.5 16.5L17 7L15.5 5.5L7.5 13.5Z" fill="#FFFFFF" />
+              </svg>
+            )}
+          </button>
         ) : (
           <div className="text-medium12 mt-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#6B5CFF] text-white">
             {order}

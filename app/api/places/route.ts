@@ -1,3 +1,5 @@
+// app/api/places/route.ts
+
 import { NextResponse } from 'next/server';
 import placesData from '@/data/places.json';
 import { createSupabaseServer } from '@/lib/supabase/server';
@@ -74,4 +76,69 @@ export async function POST(req: Request) {
     success: true,
     insertedCount: rows.length,
   });
+}
+
+export async function DELETE(req: Request) {
+  const supabase = await createSupabaseServer();
+
+  // 1. 로그인 체크
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (!user || authError) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // 2. body 파싱
+  const { planId, dayIndex, placeIds } = await req.json();
+  if (!planId || !dayIndex || !Array.isArray(placeIds) || placeIds.length === 0) {
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 });
+  }
+
+  // 3. day 조회
+  const { data: day, error: dayError } = await supabase
+    .from('travel_day')
+    .select('day_id')
+    .eq('plan_id', planId)
+    .eq('day_index', Number(dayIndex))
+    .single();
+  if (!day || dayError) {
+    return NextResponse.json({ error: 'Day not found' }, { status: 404 });
+  }
+
+  // 4. 삭제
+  const { error: deleteError } = await supabase
+    .from('travel_place')
+    .delete()
+    .eq('day_id', day.day_id)
+    .in('place_id', placeIds);
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+  }
+
+  // 5. 남은 항목 order_index 재정렬 (1..n)
+  const { data: remaining, error: fetchError } = await supabase
+    .from('travel_place')
+    .select('place_id')
+    .eq('day_id', day.day_id)
+    .order('order_index');
+  if (fetchError) {
+    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+  }
+
+  if (remaining && remaining.length > 0) {
+    for (let i = 0; i < remaining.length; i++) {
+      const p = remaining[i];
+      const { error: reindexError } = await supabase
+        .from('travel_place')
+        .update({ order_index: i + 1 })
+        .eq('place_id', p.place_id);
+      if (reindexError) {
+        return NextResponse.json({ error: reindexError.message }, { status: 500 });
+      }
+    }
+  }
+
+  return NextResponse.json({ success: true, deletedCount: placeIds.length });
 }

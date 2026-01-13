@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import PlanDay from './plan-day';
 import { DndContext, closestCenter } from '@dnd-kit/core';
@@ -33,6 +33,12 @@ export default function PlanDayList({ days, planId }: Props) {
   const [dayData, setDayData] = useState<DayWithPlaces[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  // day별 선택 상태 집계
+  const [selectionByDay, setSelectionByDay] = useState<Record<number, string[]>>({});
+
+  const handleSelectionChange = useCallback((idx: number, ids: string[]) => {
+    setSelectionByDay((prev) => ({ ...prev, [idx]: ids }));
+  }, []);
 
   const fetchDays = async () => {
     const res = await fetch(`/api/plans/${planId}/days`);
@@ -47,6 +53,22 @@ export default function PlanDayList({ days, planId }: Props) {
     fetchDays();
   }, [planId]);
 
+  // 삭제 처리
+  const handleDeleteSelected = async () => {
+    const entries = Object.entries(selectionByDay);
+    for (const [dayIndexStr, ids] of entries) {
+      const dayIndex = Number(dayIndexStr);
+      if (!ids || ids.length === 0) continue;
+      await fetch('/api/places', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId, dayIndex, placeIds: ids }),
+      });
+    }
+    await fetchDays();
+    setSelectionByDay({});
+  };
+
   if (loading) {
     return <div className="p-4 text-center">불러오는 중...</div>;
   }
@@ -56,8 +78,19 @@ export default function PlanDayList({ days, planId }: Props) {
 
   return (
     <div>
-      <div className="flex items-center justify-end px-1 pb-1">
-        <button className="text-regular13 rounded px-2 py-1 text-[#6B5CFF]" onClick={() => setIsEditing((v) => !v)}>
+      <div className="flex items-center justify-end gap-1 px-1 pb-1">
+        {isEditing && (
+          <button
+            className="text-medium13 cursor-pointer rounded px-1 py-1 text-[#c4c4c4]"
+            onClick={handleDeleteSelected}
+          >
+            선택 삭제
+          </button>
+        )}
+        <button
+          className="text-medium13 cursor-pointer rounded px-1 py-1 text-[#6B5CFF]"
+          onClick={() => setIsEditing((v) => !v)}
+        >
           {isEditing ? '편집 종료' : '편집'}
         </button>
       </div>
@@ -170,6 +203,7 @@ export default function PlanDayList({ days, planId }: Props) {
                 onAddPlace={() => router.push(`/plan/${planId}/map?day=${dayIndex}`)}
                 onMoved={fetchDays}
                 isEditing={isEditing}
+                onSelectionChange={handleSelectionChange}
               />
             );
           })}
