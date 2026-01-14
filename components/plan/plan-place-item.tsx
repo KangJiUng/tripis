@@ -76,7 +76,8 @@ export default function PlanPlaceItem({
           <button
             ref={setActivatorNodeRef}
             {...(isEditing ? dragHandleProps : {})}
-            className="flex h-8 w-8 cursor-grab items-center justify-center rounded hover:bg-gray-100 active:cursor-grabbing"
+            className="flex h-8 w-8 cursor-grab items-center justify-center rounded select-none hover:bg-gray-100 active:cursor-grabbing"
+            style={{ touchAction: 'none' }}
             aria-label="드래그 핸들"
           >
             <DragHandleIcon fill={'#777'} />
