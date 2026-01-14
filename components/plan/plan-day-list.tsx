@@ -114,10 +114,19 @@ export default function PlanDayList({ days, planId }: Props) {
         onDragStart={(event: DragStartEvent) => {
           const { active } = event;
           setActiveId(String(active.id));
+
+          // 모바일에서 드래그 중 화면 스크롤 방지
+          document.body.style.overflow = 'hidden';
+          document.body.style.touchAction = 'none';
         }}
         onDragEnd={async (event: DragEndEvent) => {
           const { active, over } = event;
           setActiveId(null);
+
+          // 드래그 종료 시 스크롤 복구
+          document.body.style.overflow = '';
+          document.body.style.touchAction = '';
+
           if (!isEditing || !over) return;
 
           const activePlaceId = String(active.id);
