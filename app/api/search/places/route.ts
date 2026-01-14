@@ -8,10 +8,10 @@ export async function GET(req: Request) {
   const filtered = placesData.predictions
     .filter((p) => p.name.toLowerCase().includes(query))
     .map((p) => ({
-      id: p.place_id,
+      place_id: p.place_id,
       name: p.name,
       address: p.formatted_address,
-      category: p.types?.[0],
+      primary_type: p.primary_type,
       latitude: p.geometry.location.lat,
       longitude: p.geometry.location.lng,
     }));
