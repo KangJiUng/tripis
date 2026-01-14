@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import PlanPlaceItem from './plan-place-item';
-import { useSortable } from '@dnd-kit/sortable';
+import { useSortable, SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import type { Place } from '@/types';
@@ -38,13 +38,17 @@ function SortablePlaceItem({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? undefined : transition,
+    transition: 'transform 200ms ease',
     willChange: 'transform',
     zIndex: isDragging ? 10 : 'auto',
   } as React.CSSProperties;
 
   return (
-    <div ref={setNodeRef} style={style} className={isDragging ? 'pointer-events-none' : ''}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`transition-transform duration-200 ease-in-out ${isDragging ? 'pointer-events-none opacity-0' : ''}`}
+    >
       <PlanPlaceItem
         order={order}
         title={place.title}
@@ -79,6 +83,9 @@ export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing 
 
   const { setNodeRef: setDayDroppableRef } = useDroppable({ id: `day-${dayIndex}-container` });
 
+  // 각 일차를 독립적인 SortableContext로 분리
+  const dayPlaceIds = places.map((p) => p.place_id);
+
   return (
     <section ref={setDayDroppableRef} className="py-4">
       <div className="flex items-center justify-between">
@@ -90,24 +97,26 @@ export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing 
         </h3>
       </div>
 
-      <div className="mt-3 flex flex-col gap-2">
-        {places.length === 0 ? (
-          <div className="text-regular14 rounded border border-dashed py-3 text-center text-gray-400">
-            아직 추가된 장소가 없어요
-          </div>
-        ) : (
-          places.map((place, index) => (
-            <SortablePlaceItem
-              key={place.place_id}
-              place={place}
-              order={index + 1}
-              isEditing={isEditing}
-              onToggleSelected={() => toggleOne(place.place_id)}
-              isSelected={selectedIds.includes(place.place_id)}
-            />
-          ))
-        )}
-      </div>
+      <SortableContext items={dayPlaceIds}>
+        <div className="mt-3 flex flex-col gap-2">
+          {places.length === 0 ? (
+            <div className="text-regular14 rounded border border-dashed py-3 text-center text-gray-400">
+              아직 추가된 장소가 없어요
+            </div>
+          ) : (
+            places.map((place, index) => (
+              <SortablePlaceItem
+                key={place.place_id}
+                place={place}
+                order={index + 1}
+                isEditing={isEditing}
+                onToggleSelected={() => toggleOne(place.place_id)}
+                isSelected={selectedIds.includes(place.place_id)}
+              />
+            ))
+          )}
+        </div>
+      </SortableContext>
 
       <div className="mt-3 flex justify-center gap-2 text-center">
         {isEditing ? (
