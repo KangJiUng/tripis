@@ -1,5 +1,6 @@
 'use client';
 
+import DragHandleIcon from '@/icons/drag-handle-icon';
 import { useState } from 'react';
 
 interface Props {
@@ -29,11 +30,11 @@ export default function PlanPlaceItem({
   const selected = isSelected ?? internalSelected;
   const toggle = onToggleSelected ?? (() => setInternalSelected((v) => !v));
   return (
-    <div className={`flex items-start gap-3 ${isDragging ? 'opacity-70' : ''}`}>
+    <div className={`flex items-start gap-3 ${isDragging ? 'opacity-70' : ''} transition-all duration-300 ease-in-out`}>
       <div className="relative flex shrink-0 items-start">
         {isEditing ? (
           <button
-            className={`mt-2.5 mr-2 h-6 w-6 cursor-pointer rounded-full border ${selected ? 'bg-[#6B5CFF]' : 'bg-white'} flex items-center justify-center`}
+            className={`mt-5.5 h-6 w-6 cursor-pointer rounded-full border ${selected ? 'bg-[#6B5CFF]' : 'bg-white'} flex items-center justify-center transition-colors duration-200 ease-in-out`}
             onClick={toggle}
             aria-pressed={selected}
             aria-label="장소 선택"
@@ -45,30 +46,37 @@ export default function PlanPlaceItem({
             )}
           </button>
         ) : (
-          <div className="text-medium12 mt-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#6B5CFF] text-white">
-            {order}
+          <div className="mt-2.5 flex flex-col items-center">
+            <div className="text-medium12 flex h-6 w-6 items-center justify-center rounded-full bg-[#6B5CFF] text-white transition-all duration-300 ease-in-out">
+              {order}
+            </div>
+            <div className="mt-2 h-5 w-px bg-gray-200" />
           </div>
         )}
       </div>
 
-      <div className="mr-1 flex max-w-[570px] flex-1 items-center gap-2 rounded-lg bg-white px-4 py-3 shadow">
-        <div className="flex-1">
-          <div className="text-medium15 text-gray-900">{title}</div>
-          {primaryType && <div className="text-regular13 mt-0.5 text-gray-400">{primaryType}</div>}
+      <div
+        className={`mr-1 flex flex-1 items-center ${isEditing ? 'gap-2' : 'gap-0'} transition-all duration-300 ease-in-out`}
+      >
+        <div className="flex max-w-full flex-1 items-center gap-2 rounded-lg bg-white px-4 py-3 shadow transition-all duration-300 ease-in-out">
+          <div className="flex-1">
+            <div className="text-medium15 text-gray-900">{title}</div>
+            {primaryType && <div className="text-regular13 mt-0.5 text-gray-400">{primaryType}</div>}
+          </div>
         </div>
 
-        {isEditing && (
+        <div
+          className={`flex ${isEditing ? 'w-8' : 'w-0'} h-8 shrink-0 items-center justify-center overflow-hidden rounded transition-all duration-300 ease-in-out ${isEditing ? 'translate-x-0 opacity-100' : 'pointer-events-none -translate-x-1 opacity-0'}`}
+        >
           <button
             ref={setActivatorNodeRef}
-            {...dragHandleProps}
-            className="flex h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded hover:bg-gray-100 active:cursor-grabbing"
+            {...(isEditing ? dragHandleProps : {})}
+            className="flex h-8 w-8 cursor-grab items-center justify-center rounded hover:bg-gray-100 active:cursor-grabbing"
             aria-label="드래그 핸들"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-gray-500">
-              <path d="M3 15h18v-2H3v2zm0 4h18v-2H3v2zm0-8h18V9H3v2zm0-6v2h18V5H3z" fill="currentColor" />
-            </svg>
+            <DragHandleIcon fill={'#777'} />
           </button>
-        )}
+        </div>
       </div>
     </div>
   );
