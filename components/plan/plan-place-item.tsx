@@ -11,6 +11,7 @@ interface Props {
   setActivatorNodeRef?: (element: HTMLElement | null) => void;
   isSelected?: boolean;
   onToggleSelected?: () => void;
+  isDragging?: boolean;
 }
 
 export default function PlanPlaceItem({
@@ -22,16 +23,17 @@ export default function PlanPlaceItem({
   setActivatorNodeRef,
   isSelected,
   onToggleSelected,
+  isDragging,
 }: Props) {
   const [internalSelected, setInternalSelected] = useState(false);
   const selected = isSelected ?? internalSelected;
   const toggle = onToggleSelected ?? (() => setInternalSelected((v) => !v));
   return (
-    <div className="flex items-start gap-3">
+    <div className={`flex items-start gap-3 ${isDragging ? 'opacity-70' : ''}`}>
       <div className="relative flex shrink-0 items-start">
         {isEditing ? (
           <button
-            className={`mt-2.5 mr-2 h-6 w-6 rounded-full border ${selected ? 'bg-[#6B5CFF]' : 'bg-white'} flex items-center justify-center`}
+            className={`mt-2.5 mr-2 h-6 w-6 cursor-pointer rounded-full border ${selected ? 'bg-[#6B5CFF]' : 'bg-white'} flex items-center justify-center`}
             onClick={toggle}
             aria-pressed={selected}
             aria-label="장소 선택"

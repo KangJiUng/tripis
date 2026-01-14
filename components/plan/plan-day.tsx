@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import PlanPlaceItem from './plan-place-item';
 import { useSortable } from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import type { Place } from '@/types';
 
@@ -37,12 +38,13 @@ function SortablePlaceItem({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+    transition: isDragging ? undefined : transition,
+    willChange: 'transform',
+    zIndex: isDragging ? 10 : 'auto',
+  } as React.CSSProperties;
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style} className={isDragging ? 'pointer-events-none' : ''}>
       <PlanPlaceItem
         order={order}
         title={place.title}
@@ -52,6 +54,7 @@ function SortablePlaceItem({
         dragHandleProps={isEditing ? { ...attributes, ...listeners } : undefined}
         isSelected={isSelected}
         onToggleSelected={onToggleSelected}
+        isDragging={isDragging}
       />
     </div>
   );
@@ -74,8 +77,10 @@ export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing 
     onSelectionChange?.(dayIndex, selectedIds);
   }, [dayIndex, selectedIds, onSelectionChange]);
 
+  const { setNodeRef: setDayDroppableRef } = useDroppable({ id: `day-${dayIndex}-container` });
+
   return (
-    <section className="py-4">
+    <section ref={setDayDroppableRef} className="py-4">
       <div className="flex items-center justify-between">
         <h3 className="text-medium15">
           {dayIndex}일차{' '}

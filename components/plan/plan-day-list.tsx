@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import PlanDay from './plan-day';
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCenter, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 
 interface Place {
@@ -33,8 +33,8 @@ export default function PlanDayList({ days, planId }: Props) {
   const [dayData, setDayData] = useState<DayWithPlaces[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  // day별 선택 상태 집계
   const [selectionByDay, setSelectionByDay] = useState<Record<number, string[]>>({});
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const handleSelectionChange = useCallback((idx: number, ids: string[]) => {
     setSelectionByDay((prev) => ({ ...prev, [idx]: ids }));
@@ -51,6 +51,20 @@ export default function PlanDayList({ days, planId }: Props) {
 
   useEffect(() => {
     fetchDays();
+  }, [planId]);
+
+  // 빈 day의 첫 추가도 즉시 반영
+  useEffect(() => {
+    const onFocus = () => fetchDays();
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') fetchDays();
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, [planId]);
 
   // 삭제 처리
@@ -97,11 +111,20 @@ export default function PlanDayList({ days, planId }: Props) {
 
       <DndContext
         collisionDetection={closestCenter}
-        onDragEnd={async ({ active, over }) => {
+        onDragStart={(event: DragStartEvent) => {
+          const { active } = event;
+          setActiveId(String(active.id));
+        }}
+        onDragEnd={async (event: DragEndEvent) => {
+          const { active, over } = event;
+          setActiveId(null);
           if (!isEditing || !over) return;
 
           const activePlaceId = String(active.id);
-          const overPlaceId = String(over.id);
+          const overId = String(over.id);
+
+          // Day 컨테이너로 드롭된 경우
+          const overIsDayContainer = overId.startsWith('day-') && overId.endsWith('-container');
 
           // 활성 place가 속한 day 찾기
           let sourceDayIndex = -1;
@@ -111,20 +134,26 @@ export default function PlanDayList({ days, planId }: Props) {
             if (d.places.some((p) => p.place_id === activePlaceId)) {
               sourceDayIndex = d.day_index;
             }
-            if (d.places.some((p) => p.place_id === overPlaceId)) {
+            if (!overIsDayContainer && d.places.some((p) => p.place_id === overId)) {
               targetDayIndex = d.day_index;
             }
           }
 
+          // 컨테이너로 드롭이면 over에서 dayIndex 추출
+          if (overIsDayContainer) {
+            const match = overId.match(/^day-(\d+)-container$/);
+            targetDayIndex = match ? Number(match[1]) : -1;
+          }
+
           if (sourceDayIndex === -1 || targetDayIndex === -1) return;
 
-          // 같은 day 내 재정렬
-          if (sourceDayIndex === targetDayIndex) {
+          if (!overIsDayContainer && sourceDayIndex === targetDayIndex) {
+            // 같은 day 내 재정렬
             const dayToUpdate = dayData.find((d) => d.day_index === sourceDayIndex);
             if (!dayToUpdate) return;
 
             const oldIndex = dayToUpdate.places.findIndex((p) => p.place_id === activePlaceId);
-            const newIndex = dayToUpdate.places.findIndex((p) => p.place_id === overPlaceId);
+            const newIndex = dayToUpdate.places.findIndex((p) => p.place_id === overId);
 
             if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
 
@@ -143,36 +172,37 @@ export default function PlanDayList({ days, planId }: Props) {
                 planId,
                 dayIndex: sourceDayIndex,
                 activePlaceId,
-                overPlaceId,
+                overPlaceId: overId,
               }),
             });
             await fetchDays();
           } else {
-            // 다른 day로 이동 (로컬 낙관적 업데이트)
+            // 다른 day로 이동
             const sourceDay = dayData.find((d) => d.day_index === sourceDayIndex);
-            const targetDay = dayData.find((d) => d.day_index === targetDayIndex);
             const movingPlace = sourceDay?.places.find((p) => p.place_id === activePlaceId);
             if (!movingPlace) return;
 
             setDayData((prev) => {
               return prev.map((d) => {
                 if (d.day_index === sourceDayIndex) {
-                  // 소스 day에서 제거
                   return { ...d, places: d.places.filter((p) => p.place_id !== activePlaceId) };
                 }
                 if (d.day_index === targetDayIndex) {
-                  // 타겟 day에 over 위치로 삽입, 없으면 마지막에 추가
-                  const overIdx = d.places.findIndex((p) => p.place_id === overPlaceId);
-                  const insertIdx = overIdx >= 0 ? overIdx : d.places.length;
                   const newPlaces = [...d.places];
-                  newPlaces.splice(insertIdx, 0, { ...movingPlace, order_index: insertIdx + 1 });
+                  if (overIsDayContainer) {
+                    // 빈 day 또는 컨테이너로 드롭
+                    newPlaces.push({ ...movingPlace, order_index: newPlaces.length + 1 });
+                  } else {
+                    const overIdx = d.places.findIndex((p) => p.place_id === overId);
+                    const insertIdx = overIdx >= 0 ? overIdx : newPlaces.length;
+                    newPlaces.splice(insertIdx, 0, { ...movingPlace, order_index: insertIdx + 1 });
+                  }
                   return { ...d, places: newPlaces };
                 }
                 return d;
               });
             });
 
-            // 서버 반영
             await fetch('/api/places/move', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -180,8 +210,7 @@ export default function PlanDayList({ days, planId }: Props) {
                 planId,
                 placeId: activePlaceId,
                 targetDayIndex,
-                // 서버에서도 정확한 삽입 위치를 알 수 있도록 전달
-                overPlaceId,
+                overPlaceId: overIsDayContainer ? undefined : overId,
               }),
             });
             await fetchDays();
@@ -208,6 +237,33 @@ export default function PlanDayList({ days, planId }: Props) {
             );
           })}
         </SortableContext>
+        <DragOverlay>
+          {activeId
+            ? (() => {
+                const found = dayData.flatMap((d) => d.places).find((p) => p.place_id === activeId);
+                if (!found) return null;
+                return (
+                  <div className="pointer-events-none">
+                    <div className="mt-0">
+                      <div className="mr-1 flex max-w-[570px] items-center gap-2 rounded-lg bg-white px-4 py-3 shadow">
+                        <div className="flex-1">
+                          <div className="text-medium15 text-gray-900">{found.title}</div>
+                          {found.primary_type && (
+                            <div className="text-regular13 mt-0.5 text-gray-400">{found.primary_type}</div>
+                          )}
+                        </div>
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-gray-500">
+                            <path d="M3 15h18v-2H3v2zm0 4h18v-2H3v2zm0-8h18V9H3v2zm0-6v2h18V5H3z" fill="currentColor" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()
+            : null}
+        </DragOverlay>
       </DndContext>
     </div>
   );
