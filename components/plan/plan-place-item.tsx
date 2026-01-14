@@ -1,5 +1,6 @@
 'use client';
 
+import CheckIcon from '@/icons/check-icon';
 import DragHandleIcon from '@/icons/drag-handle-icon';
 import { useState } from 'react';
 
@@ -40,9 +41,9 @@ export default function PlanPlaceItem({
             aria-label="장소 선택"
           >
             {selected && (
-              <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-                <path d="M7.5 13.5L4.5 10.5L3 12L7.5 16.5L17 7L15.5 5.5L7.5 13.5Z" fill="#FFFFFF" />
-              </svg>
+              <div className="scale-80">
+                <CheckIcon />
+              </div>
             )}
           </button>
         ) : (
@@ -59,12 +60,16 @@ export default function PlanPlaceItem({
         className={`mr-1 flex flex-1 items-center ${isEditing ? 'gap-2' : 'gap-0'} transition-all duration-300 ease-in-out`}
       >
         <div className="flex max-w-full flex-1 items-center gap-2 rounded-lg bg-white px-4 py-3 shadow transition-all duration-300 ease-in-out">
+          {isEditing && (
+            <div className="text-medium12 mr-2 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#d9d9d9] text-white">
+              {order}
+            </div>
+          )}
           <div className="flex-1">
             <div className="text-medium15 text-gray-900">{title}</div>
             {primaryType && <div className="text-regular13 mt-0.5 text-gray-400">{primaryType}</div>}
           </div>
         </div>
-
         <div
           className={`flex ${isEditing ? 'w-8' : 'w-0'} h-8 shrink-0 items-center justify-center overflow-hidden rounded transition-all duration-300 ease-in-out ${isEditing ? 'translate-x-0 opacity-100' : 'pointer-events-none -translate-x-1 opacity-0'}`}
         >
