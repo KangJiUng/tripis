@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/stores/user-store';
 import WriteHeader from '@/components/headers/write-header';
 import SubmitButton from '@/components/buttons/submit-button';
 import CountrySelectorModal from '@/components/country-selector-modal';
@@ -21,6 +23,8 @@ export default function Page() {
   const [content, setContent] = useState<string>('');
   const [isCountryModalOpen, setIsCountryModalOpen] = useState<boolean>(false);
   const [images, setImages] = useState<File[]>([]);
+  const router = useRouter();
+  const { user } = useUserStore();
 
   const categories = ['질문', '도움요청', '여행톡'];
   const topics = ['나라', '동행', '양도', '음식', '장소'];
@@ -30,6 +34,40 @@ export default function Page() {
   const handleCountrySelect = (country: Country) => {
     setSelectedCountry(country);
   };
+
+  async function handleSubmit() {
+    if (!isFormValid) return;
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+    const formData = new FormData();
+
+    formData.append('post_type', selectedCategory);
+    formData.append('title', title);
+    formData.append('content', content);
+
+    if (selectedTopic) {
+      formData.append('tags', selectedTopic);
+    }
+
+    images.forEach((img) => {
+      formData.append('images', img);
+    });
+
+    const res = await fetch('/api/posts', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      alert('게시글 작성 실패');
+      return;
+    }
+    alert('게시글이 성공적으로 작성되었습니다!');
+    router.push('/');
+  }
+
   return (
     <div className="flex-1 overflow-y-auto px-2 pt-4">
       <WriteHeader title="게시글 작성" />
@@ -175,7 +213,7 @@ export default function Page() {
 
       <div className="fixed bottom-0 left-0 w-full">
         <div className="mx-auto max-w-[600px]">
-          <SubmitButton disabled={!isFormValid} />
+          <SubmitButton disabled={!isFormValid} onClick={handleSubmit} />
         </div>
       </div>
 

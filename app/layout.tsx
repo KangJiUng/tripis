@@ -1,17 +1,17 @@
 import './globals.css';
 import Sidebar from '@/components/sidebar/sidebar';
+import Providers from './providers';
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <body>
-        <div className="container">
-          {children} <Sidebar />
-        </div>
+        <Providers>
+          <div className="container">
+            {children}
+            <Sidebar />
+          </div>
+        </Providers>
       </body>
     </html>
   );
