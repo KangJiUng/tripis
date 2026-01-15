@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CountryList from '@/components/country-list';
 import SubmitButton from '@/components/buttons/submit-button';
@@ -14,24 +14,33 @@ type Country = {
 interface CountrySelectorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (country: Country) => void;
+  onSelect: (countries: Country[]) => void;
+  initialSelected: Country[];
 }
 
-export default function CountrySelectorModal({ isOpen, onClose, onSelect }: CountrySelectorModalProps) {
+export default function CountrySelectorModal({
+  isOpen,
+  onClose,
+  onSelect,
+  initialSelected,
+}: CountrySelectorModalProps) {
   const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
 
   const handleSelect = () => {
     if (selectedCountries.length === 0) return;
 
-    const country = selectedCountries[0];
-    onSelect(country);
+    onSelect(selectedCountries);
     onClose();
-    setSelectedCountries([]);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedCountries(initialSelected);
+    }
+  }, [isOpen, initialSelected]);
 
   const handleClose = () => {
     onClose();
-    setSelectedCountries([]);
   };
 
   return (

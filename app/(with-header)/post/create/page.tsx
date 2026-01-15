@@ -18,7 +18,7 @@ type Country = {
 export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedTopic, setSelectedTopic] = useState<string>('');
-  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [isCountryModalOpen, setIsCountryModalOpen] = useState<boolean>(false);
@@ -29,11 +29,7 @@ export default function Page() {
   const categories = ['질문', '도움요청', '여행톡'];
   const topics = ['나라', '동행', '양도', '음식', '장소'];
 
-  const isFormValid = selectedCategory && selectedCountry && title.trim() && content.trim();
-
-  const handleCountrySelect = (country: Country) => {
-    setSelectedCountry(country);
-  };
+  const isFormValid = selectedCategory && selectedCountries.length > 0 && title.trim() && content.trim();
 
   const handleTopicClick = (topic: string) => {
     setSelectedTopic((prev) => (prev === topic ? '' : topic));
@@ -50,6 +46,10 @@ export default function Page() {
     formData.append('post_type', selectedCategory);
     formData.append('title', title);
     formData.append('content', content);
+
+    selectedCountries.forEach((country) => {
+      formData.append('countries', country.name);
+    });
 
     if (selectedTopic) {
       formData.append('tags', selectedTopic);
@@ -94,32 +94,32 @@ export default function Page() {
         </div>
       </div>
       <div className="text-medium13">나라 선택(필수)</div>
-      <div className="relative flex items-center pt-2 pb-4">
-        {selectedCountry && (
-          <div className="text-medium12 absolute top-[13px] left-7.5 z-10 flex items-center gap-1 rounded-full border border-[#5364FF] bg-[rgb(239,239,255)] px-[7px] text-[#5364FF]">
-            {selectedCountry.name}
-            <button
-              onClick={() => setSelectedCountry(null)}
-              className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-full text-[#5364FF] hover:bg-[#f1f1ff]"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-        )}
+      <div className="pt-2 pb-4">
         <div
-          className="relative flex h-8 w-60 cursor-pointer items-center justify-center rounded-[15px] border border-gray-300"
+          className="flex min-h-8 w-fit max-w-[600px] min-w-60 cursor-pointer flex-wrap items-center gap-1 rounded-[15px] border border-gray-300 px-2 py-1"
           onClick={() => setIsCountryModalOpen(true)}
         >
-          <span className="absolute top-1/2 left-2 -translate-y-1/2">
-            <SearchIcon color="#aeaeae" />
-          </span>
-          <span
-            className={`text-regular12 absolute top-[15px] left-8 -translate-y-1/2 ${
-              selectedCountry ? 'text-black' : 'text-[#aeaeae]'
-            }`}
-          >
-            {selectedCountry ? selectedCountry.name : '나라를 검색해보세요'}
-          </span>
+          <SearchIcon color="#aeaeae" />
+
+          {selectedCountries.map((country) => (
+            <div
+              key={country.id}
+              className="text-medium12 flex items-center gap-1 rounded-full border border-[#5364FF] bg-[rgb(239,239,255)] px-2 py-0.5 text-[#5364FF]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {country.name}
+              <button
+                className="rounded-full text-[#5364FF] hover:bg-[#d9d9ff]"
+                onClick={() => setSelectedCountries((prev) => prev.filter((c) => c.id !== country.id))}
+              >
+                <div className="flex h-4 w-4 cursor-pointer items-center justify-center">
+                  <CloseIcon />
+                </div>
+              </button>
+            </div>
+          ))}
+
+          {selectedCountries.length === 0 && <span className="text-regular12 text-[#aeaeae]">나라를 검색해보세요</span>}
         </div>
       </div>
 
@@ -224,7 +224,8 @@ export default function Page() {
       <CountrySelectorModal
         isOpen={isCountryModalOpen}
         onClose={() => setIsCountryModalOpen(false)}
-        onSelect={handleCountrySelect}
+        initialSelected={selectedCountries}
+        onSelect={(countries) => setSelectedCountries(countries)}
       />
     </div>
   );

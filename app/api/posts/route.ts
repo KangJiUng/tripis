@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     const post_type = formData.get('post_type') as string;
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
+    const countries = formData.getAll('countries') as string[];
     const tags = formData.get('tags') as string | null;
     const images = formData.getAll('images') as File[];
 
@@ -40,6 +41,7 @@ export async function POST(req: Request) {
         post_type,
         title,
         content,
+        countries,
         tags,
         image_urls: [],
       })
