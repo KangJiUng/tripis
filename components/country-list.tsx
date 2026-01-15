@@ -37,12 +37,12 @@ export default function CountryList({ onChangeSelected }: Props) {
     <div>
       <PlanCountrySearchBar value={query} onChange={setQuery} />
 
-      <HorizontalScroll className="gap-2 px-1 py-2.5">
+      <HorizontalScroll className="-mx-[15px] -mb-[15px] gap-2 px-[15px] py-2.5">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`text-medium12 cursor-pointer rounded-[17px] border px-3 py-2 transition-colors ${
+            className={`text-medium12 shrink-0 cursor-pointer rounded-[17px] border px-3 py-2 transition-colors ${
               activeTab === tab.key
                 ? 'border-[#5364FF] bg-[#5364FF] text-white'
                 : 'border-[#e0e0e0] bg-white text-[#222]'
@@ -56,7 +56,7 @@ export default function CountryList({ onChangeSelected }: Props) {
       <div className="mt-3 space-y-6">
         {isSearching ? (
           <div>
-            <div className="text-bold14 mb-2 px-2">검색 결과</div>
+            <div className="text-bold14 px- mb-2 px-2">검색 결과</div>
 
             <ul className="flex flex-col gap-2">
               {visibleCities.map((city) => {
@@ -96,7 +96,7 @@ export default function CountryList({ onChangeSelected }: Props) {
 
                 return (
                   <div key={tab.key}>
-                    <div className="text-bold14 mb-2 px-2">{tab.label}</div>
+                    <div className="text-bold14 mt-5 mb-2 px-2">{tab.label}</div>
 
                     <ul className="flex flex-col gap-2">
                       {list.map((city) => {

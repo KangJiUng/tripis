@@ -24,7 +24,7 @@ export default function SidebarWrapper({ children }: SidebarWrapperProps) {
           />
 
           <aside
-            className={`absolute right-0 bottom-0 h-[94%] w-full max-w-[320px] transform bg-white shadow-xl transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} rounded-tl-2xl p-2`}
+            className={`absolute right-0 bottom-0 h-[94%] w-full max-w-[320px] transform bg-white transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} rounded-tl-2xl p-2`}
           >
             <div>
               <div className="flex justify-end">
