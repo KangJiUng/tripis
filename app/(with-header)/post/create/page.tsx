@@ -35,6 +35,10 @@ export default function Page() {
     setSelectedCountry(country);
   };
 
+  const handleTopicClick = (topic: string) => {
+    setSelectedTopic((prev) => (prev === topic ? '' : topic));
+  };
+
   async function handleSubmit() {
     if (!isFormValid) return;
     if (!user) {
@@ -103,7 +107,7 @@ export default function Page() {
           </div>
         )}
         <div
-          className="relative flex h-8 w-60 cursor-pointer items-center justify-center rounded-[15px] border border-[#d4d4d4]"
+          className="relative flex h-8 w-60 cursor-pointer items-center justify-center rounded-[15px] border border-gray-300"
           onClick={() => setIsCountryModalOpen(true)}
         >
           <span className="absolute top-1/2 left-2 -translate-y-1/2">
@@ -125,7 +129,7 @@ export default function Page() {
           {topics.map((topic) => (
             <button
               key={topic}
-              onClick={() => setSelectedTopic(topic)}
+              onClick={() => handleTopicClick(topic)}
               className={`text-medium12 cursor-pointer rounded-[17px] border px-2 py-1 ${
                 selectedTopic === topic
                   ? 'border-[#5364FF] bg-[#5364FF] text-white'
