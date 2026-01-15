@@ -6,6 +6,7 @@ import SubmitButton from '@/components/buttons/submit-button';
 import CountrySelectorModal from '@/components/country-selector-modal';
 import SearchIcon from '@/icons/search-icon';
 import CloseIcon from '@/icons/close-icon';
+import HorizontalScroll from '@/components/horizontal-scroll';
 
 type Country = {
   id: string;
@@ -19,6 +20,7 @@ export default function Page() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [isCountryModalOpen, setIsCountryModalOpen] = useState<boolean>(false);
+  const [images, setImages] = useState<File[]>([]);
 
   const categories = ['질문', '도움요청', '여행톡'];
   const topics = ['나라', '동행', '양도', '음식', '장소'];
@@ -99,10 +101,56 @@ export default function Page() {
       </div>
 
       <div className="pt-4">
-        <div className="mb-6">
-          <button className="text-regular12 flex h-28 w-28 cursor-pointer items-center justify-center rounded-lg bg-gray-200 text-gray-400">
-            0/10
+        <div className="mb-6 flex items-center gap-2 overflow-x-auto">
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: 'none' }}
+            id="image-upload-input"
+            onChange={(e) => {
+              const files = Array.from(e.target.files || []);
+              if (files.length + images.length > 10) {
+                alert('최대 10장까지 첨부 가능합니다.');
+                return;
+              }
+              setImages((prev) => [...prev, ...files.slice(0, 10 - prev.length)]);
+            }}
+          />
+          <button
+            className="text-regular12 flex h-25 w-25 shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg bg-gray-200 text-gray-400"
+            onClick={() => document.getElementById('image-upload-input')?.click()}
+          >
+            <span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}>
+              <CloseIcon />
+            </span>
+            {images.length}/10
           </button>
+          {images.length > 0 && (
+            <HorizontalScroll className="max-w-[70vw] items-center gap-2">
+              {images.map((img, idx) => (
+                <div key={idx} className="relative h-25 w-25 shrink-0">
+                  <img
+                    src={URL.createObjectURL(img)}
+                    alt="preview"
+                    className="pointer-events-none h-full w-full rounded-lg object-cover"
+                  />
+                  {idx === 0 && (
+                    <span className="text-regular12 absolute top-1 left-1 z-10 rounded-lg bg-[rgba(30,30,30,0.77)] px-1.5 py-0.5 text-white">
+                      대표
+                    </span>
+                  )}
+                  <button
+                    className="pointer-events-auto absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-white text-gray-500 shadow"
+                    onClick={() => setImages(images.filter((_, i) => i !== idx))}
+                    type="button"
+                  >
+                    <CloseIcon />
+                  </button>
+                </div>
+              ))}
+            </HorizontalScroll>
+          )}
         </div>
 
         <div className="mb-6">
