@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import CountryList from '@/components/country-list';
 import SubmitButton from '@/components/buttons/submit-button';
 import CloseIcon from '@/icons/close-icon';
@@ -33,28 +34,44 @@ export default function CountrySelectorModal({ isOpen, onClose, onSelect }: Coun
     setSelectedCountries([]);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="bg-opacity-50 fixed inset-0 z-50 bg-black" onClick={handleClose}>
-      <div className="fixed inset-x-0 bottom-0 flex justify-center">
-        <div
-          className="flex h-[80vh] w-full max-w-[600px] flex-col rounded-t-lg bg-white"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between border-gray-200 px-3 pt-3 pb-4">
-            <h2 className="text-medium16 mt-1 ml-1">나라 선택</h2>
-            <button className="cursor-pointer" onClick={handleClose}>
-              <CloseIcon />
-            </button>
-          </div>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex justify-center" onClick={handleClose}>
+          <motion.div
+            className="absolute inset-0 flex justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="h-full w-full max-w-[600px] bg-black/50" />
+          </motion.div>
 
-          <div className="flex-1 overflow-y-auto px-4">
-            <CountryList onChangeSelected={(countries: Country[]) => setSelectedCountries(countries)} />
-          </div>
-          <SubmitButton text="선택 완료" disabled={selectedCountries.length === 0} onClick={handleSelect} />
+          <motion.div
+            className="fixed inset-x-0 bottom-0 flex justify-center"
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '100%', opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 30 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex h-[80vh] w-full max-w-[600px] flex-col rounded-t-lg bg-white">
+              <div className="flex items-center justify-between px-3 pt-3 pb-4">
+                <h2 className="text-medium16 mt-1 ml-1">나라 선택</h2>
+                <button className="cursor-pointer" onClick={handleClose}>
+                  <CloseIcon />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-4">
+                <CountryList onChangeSelected={(countries: Country[]) => setSelectedCountries(countries)} />
+              </div>
+
+              <SubmitButton text="선택 완료" disabled={selectedCountries.length === 0} onClick={handleSelect} />
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
