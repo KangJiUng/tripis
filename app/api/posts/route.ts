@@ -3,6 +3,7 @@ import { createSupabaseServer } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
   const supabase = await createSupabaseServer();
+  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
   try {
     // 1. 로그인 체크
@@ -67,7 +68,7 @@ export async function POST(req: Request) {
 
         if (error) throw error;
 
-        uploadedPaths.push(`tripis-post-images/${path}`);
+        uploadedPaths.push(`${SUPABASE_URL}/storage/v1/object/public/tripis-post-images/${path}`);
       }
 
       // 5. post image_urls 업데이트
@@ -95,4 +96,66 @@ export async function POST(req: Request) {
     console.error('POST /api/posts error:', e);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
+}
+
+export async function GET(req: Request) {
+  const supabase = await createSupabaseServer();
+  const { searchParams } = new URL(req.url);
+
+  const id = searchParams.get('id');
+  const type = searchParams.get('type');
+
+  // 1. 포스트 상세 조회
+  if (id) {
+    const { data: post, error } = await supabase
+      .from('post')
+      .select(
+        `
+        post_id,
+        post_type,
+        title,
+        content,
+        tags,
+        countries,
+        image_urls,
+        created_at,
+        user_id
+        `,
+      )
+      .eq('post_id', id)
+      .single();
+
+    if (error || !post) {
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ post });
+  }
+
+  // 2. 리스트 조회 (탭별)
+  if (type) {
+    const { data: posts, error } = await supabase
+      .from('post')
+      .select(
+        `
+        post_id,
+        title,
+        content,
+        post_type,
+        image_urls,
+        created_at,
+        user_id
+        `,
+      )
+      .eq('post_type', type)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
+    }
+
+    return NextResponse.json({ posts });
+  }
+
+  return NextResponse.json({ error: 'Query parameter required (id or type)' }, { status: 400 });
 }
