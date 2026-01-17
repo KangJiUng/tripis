@@ -15,6 +15,8 @@ type Post = {
   created_at: string;
   user_id: string;
   image_urls: string[];
+  countries: string[];
+  tags: string | null;
   post_type: string;
   users: {
     nickname: string;
