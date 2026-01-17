@@ -7,6 +7,9 @@ type CommonPost = {
   created_at: string;
   user_id: string;
   image_urls: string[];
+  users: {
+    nickname: string;
+  };
 };
 
 export default function CommonCard({ post }: { post: CommonPost }) {
@@ -21,7 +24,7 @@ export default function CommonCard({ post }: { post: CommonPost }) {
 
           <div className="text-regular13 h-10 overflow-hidden text-ellipsis">{post.content}</div>
           <div className="text-regular12 pt-6 pb-3 text-[#c4c4c4]">
-            홍길동 • {new Date(post.created_at).toLocaleDateString()}
+            {post.users.nickname} • {new Date(post.created_at).toLocaleDateString()}
           </div>
         </div>
 

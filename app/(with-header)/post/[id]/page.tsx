@@ -8,6 +8,10 @@ type PostDetail = {
   created_at: string;
   image_urls: string[];
   countries: string[];
+  users: {
+    nickname: string | null;
+    profile_image_url: string | null;
+  };
 };
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -22,15 +26,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   }
 
   const { post }: { post: PostDetail } = await res.json();
+  const profileImage = post.users.profile_image_url ?? '/images/basic_profile.jpg';
+  const nickname = post.users.nickname ?? '알 수 없음';
 
   return (
     <div>
       <DetailHeader />
 
       <div className="flex items-center gap-3 px-1 pt-4">
-        <div className="h-10 w-10 rounded-full bg-gray-300" />
+        <img src={profileImage} alt="profile" className="h-10 w-10 rounded-full object-cover" />
+
         <div className="flex flex-col">
-          <span className="text-medium14 text-black">홍길동</span>
+          <span className="text-medium14 text-black">{nickname}</span>
           <span className="text-regular12 text-gray-400">{post.countries?.[0] ?? ''}</span>
         </div>
       </div>
@@ -42,7 +49,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       {post.image_urls?.length > 0 && (
         <div className="mt-4 flex flex-col gap-3 px-2">
           {post.image_urls.map((url, idx) => (
-            <img key={idx} src={url} alt={`post-image-${idx}`} className="w-full rounded-lg object-cover" />
+            <img key={idx} src={url} alt={`post-image-${idx}`} className="w-full rounded-[5px] object-cover" />
           ))}
         </div>
       )}

@@ -16,6 +16,10 @@ type Post = {
   user_id: string;
   image_urls: string[];
   post_type: string;
+  users: {
+    nickname: string;
+    profile_image_url: string | null;
+  };
 };
 
 export default function Page() {
