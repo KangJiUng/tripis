@@ -8,6 +8,7 @@ type PostDetail = {
   created_at: string;
   image_urls: string[];
   countries: string[];
+  tags: string | null;
   users: {
     nickname: string | null;
     profile_image_url: string | null;
@@ -29,6 +30,17 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const profileImage = post.users.profile_image_url ?? '/images/basic_profile.jpg';
   const nickname = post.users.nickname ?? '알 수 없음';
 
+  const countryTags = post.countries?.map((c) => `#${c}`) ?? [];
+
+  const tagTags =
+    post.tags
+      ?.split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map((t) => `#${t}`) ?? [];
+
+  const hashtags = [...countryTags, ...tagTags].join(' ');
+
   return (
     <div>
       <DetailHeader />
@@ -45,6 +57,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       <h1 className="text-bold18 px-2 pt-4 text-black">{post.title}</h1>
 
       <p className="text-regular13 px-2 pt-3 leading-relaxed whitespace-pre-wrap text-gray-700">{post.content}</p>
+
+      {hashtags && <div className="text-medium13 px-2 pt-4 text-[#5364FF]">{hashtags}</div>}
 
       {post.image_urls?.length > 0 && (
         <div className="mt-4 flex flex-col gap-3 px-2">

@@ -34,9 +34,9 @@ export default function CommonCard({ post }: { post: CommonPost }) {
         <div className="flex-1 pr-4">
           <div className="text-bold16 py-1">{post.title}</div>
 
-          <div className="text-regular13 h-10 overflow-hidden text-ellipsis">{post.content}</div>
+          <div className="text-regular13 line-clamp-1 h-5 overflow-hidden text-ellipsis">{post.content}</div>
 
-          {hashtags && <div className="text-medium13 line-clamp-1 pt-3 text-[#5364FF]">{hashtags}</div>}
+          {hashtags && <div className="text-medium13 line-clamp-1 pt-4 text-[#5364FF]">{hashtags}</div>}
 
           <div className="text-regular12 pt-1 pb-3 text-[#c4c4c4]">
             {post.users.nickname} • {new Date(post.created_at).toLocaleDateString()}
@@ -44,8 +44,8 @@ export default function CommonCard({ post }: { post: CommonPost }) {
         </div>
 
         {thumbnail && (
-          <div className="shrink-0 pt-1.5">
-            <img src={thumbnail} alt="post thumbnail" className="h-[115px] w-[140px] rounded-md object-cover" />
+          <div className="shrink-0">
+            <img src={thumbnail} alt="post thumbnail" className="h-[110px] w-[140px] rounded-[5px] object-cover" />
           </div>
         )}
       </div>

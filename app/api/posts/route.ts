@@ -118,6 +118,8 @@ export async function GET(req: Request) {
     tags,
     countries,
     image_urls,
+    countries,
+    tags,
     created_at,
     users!inner (
       nickname,
