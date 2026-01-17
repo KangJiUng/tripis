@@ -15,21 +15,34 @@ type Post = {
   created_at: string;
   user_id: string;
   image_urls: string[];
+  countries: string[];
+  tags: string | null;
   post_type: string;
+  users: {
+    nickname: string;
+    profile_image_url: string | null;
+  };
 };
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState<TabType>('리뷰');
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     if (activeTab === '리뷰') return;
 
     const fetchPosts = async () => {
       setLoading(true);
+
       try {
-        const res = await fetch(`/api/posts?type=${activeTab}`);
+        const url =
+          query.trim().length > 0
+            ? `/api/search/feed?query=${encodeURIComponent(query)}&type=${activeTab}`
+            : `/api/posts?type=${activeTab}`;
+
+        const res = await fetch(url);
         const data = await res.json();
 
         if (!res.ok) {
@@ -48,7 +61,7 @@ export default function Page() {
     };
 
     fetchPosts();
-  }, [activeTab]);
+  }, [activeTab, query]);
 
   return (
     <div className="min-h-screen bg-white px-2">
@@ -69,9 +82,8 @@ export default function Page() {
         ))}
       </div>
 
-      <FeedSearchBar />
+      <FeedSearchBar value={query} onChange={setQuery} />
 
-      {/* 정렬 (리뷰 전용) */}
       {activeTab === '리뷰' && (
         <div className="text-bold12 flex gap-1.5 pt-4">
           <button>• 추천순</button>
@@ -97,7 +109,9 @@ export default function Page() {
             {loading && <div className="text-regular13 pt-10 text-center text-gray-300">불러오는 중...</div>}
 
             {!loading && posts.length === 0 && (
-              <div className="text-regular13 pt-10 text-center text-gray-300">아직 게시글이 없어요.</div>
+              <div className="text-regular13 pt-10 text-center text-gray-300">
+                {query.trim() ? '찾는 게시물이 없어요.' : '아직 게시글이 없어요.'}
+              </div>
             )}
 
             {!loading &&

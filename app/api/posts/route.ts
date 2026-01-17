@@ -111,16 +111,21 @@ export async function GET(req: Request) {
       .from('post')
       .select(
         `
-        post_id,
-        post_type,
-        title,
-        content,
-        tags,
-        countries,
-        image_urls,
-        created_at,
-        user_id
-        `,
+    post_id,
+    post_type,
+    title,
+    content,
+    tags,
+    countries,
+    image_urls,
+    countries,
+    tags,
+    created_at,
+    users!inner (
+      nickname,
+      profile_image_url
+    )
+  `,
       )
       .eq('post_id', id)
       .single();
@@ -143,8 +148,14 @@ export async function GET(req: Request) {
         content,
         post_type,
         image_urls,
+        countries,
+        tags,
         created_at,
-        user_id
+        user_id,
+        users (
+          nickname,
+          profile_image_url
+        )
         `,
       )
       .eq('post_type', type)
