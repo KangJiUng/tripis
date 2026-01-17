@@ -147,6 +147,8 @@ export async function GET(req: Request) {
         content,
         post_type,
         image_urls,
+        countries,
+        tags,
         created_at,
         user_id,
         users (
