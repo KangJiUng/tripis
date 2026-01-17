@@ -30,6 +30,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const profileImage = post.users.profile_image_url ?? '/images/basic_profile.jpg';
   const nickname = post.users.nickname ?? '알 수 없음';
 
+  const countries = post.countries ?? [];
+  const countryText =
+    countries.length === 0 ? '' : countries.length === 1 ? countries[0] : `${countries[0]} 외 ${countries.length - 1}`;
+
   const countryTags = post.countries?.map((c) => `#${c}`) ?? [];
 
   const tagTags =
@@ -50,7 +54,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
         <div className="flex flex-col">
           <span className="text-medium14 text-black">{nickname}</span>
-          <span className="text-regular12 text-gray-400">{post.countries?.[0] ?? ''}</span>
+          <span className="text-regular12 text-gray-400">{countryText}</span>
         </div>
       </div>
 
