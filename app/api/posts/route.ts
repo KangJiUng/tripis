@@ -131,7 +131,6 @@ export async function GET(req: Request) {
       .single();
 
     if (error || !post) {
-      console.error('post detail error:', error);
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 

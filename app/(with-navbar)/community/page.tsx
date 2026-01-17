@@ -67,6 +67,7 @@ export default function Page() {
     <div className="min-h-screen bg-white px-2">
       <Header />
 
+      {/* 탭 */}
       <div className="flex gap-5">
         {(['리뷰', '질문', '도움요청', '여행톡'] as TabType[]).map((tab) => (
           <button
@@ -90,6 +91,7 @@ export default function Page() {
         </div>
       )}
 
+      {/* 리스트 */}
       <div className="space-y-4">
         {activeTab === '리뷰' && (
           <section>
