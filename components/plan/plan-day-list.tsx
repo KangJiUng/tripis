@@ -189,6 +189,8 @@ export default function PlanDayList({ days, planId, onViewRoute, onRouteDataChan
               }),
             });
             await fetchDays();
+
+            onRouteDataChanged?.();
           } else {
             // 다른 day로 이동
             const sourceDay = dayData.find((d) => d.day_index === sourceDayIndex);
@@ -227,6 +229,8 @@ export default function PlanDayList({ days, planId, onViewRoute, onRouteDataChan
               }),
             });
             await fetchDays();
+
+            onRouteDataChanged?.();
           }
         }}
       >
