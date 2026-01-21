@@ -16,6 +16,7 @@ interface Props {
   onMoved?: () => void;
   isEditing?: boolean;
   onSelectionChange?: (dayIndex: number, selectedIds: string[]) => void;
+  onViewRoute?: () => void;
 }
 
 function SortablePlaceItem({
@@ -64,7 +65,15 @@ function SortablePlaceItem({
   );
 }
 
-export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing = false, onSelectionChange }: Props) {
+export default function PlanDay({
+  dayIndex,
+  date,
+  places,
+  onAddPlace,
+  isEditing = false,
+  onSelectionChange,
+  onViewRoute,
+}: Props) {
   const formatted = `${date.getMonth() + 1}.${date.getDate()}`;
   const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -95,6 +104,10 @@ export default function PlanDay({ dayIndex, date, places, onAddPlace, isEditing 
             {formatted}/{dayOfWeek}
           </span>
         </h3>
+
+        <button onClick={onViewRoute} className="text-medium13 cursor-pointer text-[#6B5CFF]">
+          동선보기
+        </button>
       </div>
 
       <SortableContext items={dayPlaceIds}>

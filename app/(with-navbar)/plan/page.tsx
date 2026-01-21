@@ -16,12 +16,57 @@ type Plan = {
   end_date: string;
 };
 
+type MapPlace = {
+  place_id: string;
+  title: string;
+  latitude: number;
+  longitude: number;
+  order_index: number;
+};
+
 export default function Page() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
 
-  const today = new Date();
+  const futurePlans = plans
+    .filter((plan) => new Date(plan.start_date) >= new Date())
+    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+
+  const nearestPlan = futurePlans[0];
+  const days = nearestPlan ? getTravelDays(nearestPlan.start_date, nearestPlan.end_date) : [];
+
+  const mapCenter = (() => {
+    if (!nearestPlan) return { lat: 35.681236, lng: 139.767125 }; // fallback
+
+    const city = allCities.find((c) => c.id === nearestPlan.country);
+    if (!city) return { lat: 35.681236, lng: 139.767125 };
+
+    return { lat: city.lat, lng: city.lng };
+  })();
+
+  const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null);
+  const [mapPlaces, setMapPlaces] = useState<MapPlace[]>([]);
+
+  const [routeTrigger, setRouteTrigger] = useState(0);
+
+  const refreshRouteForSelectedDay = async () => {
+    if (!nearestPlan || selectedDayIndex === null) {
+      setMapPlaces([]);
+      return;
+    }
+
+    const res = await fetch(`/api/plans/${nearestPlan.plan_id}/days`);
+    if (!res.ok) {
+      setMapPlaces([]);
+      return;
+    }
+
+    const data = await res.json();
+    const day = data.days.find((d: any) => d.day_index === selectedDayIndex);
+
+    setMapPlaces(day?.places ?? []);
+  };
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -35,22 +80,15 @@ export default function Page() {
     fetchPlans();
   }, []);
 
-  const futurePlans = plans
-    .filter((plan) => new Date(plan.start_date) >= today)
-    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+  useEffect(() => {
+    if (!nearestPlan || days.length === 0) return;
 
-  const nearestPlan = futurePlans[0];
+    setSelectedDayIndex(1);
+  }, [nearestPlan]);
 
-  const days = nearestPlan ? getTravelDays(nearestPlan.start_date, nearestPlan.end_date) : [];
-
-  const mapCenter = (() => {
-    if (!nearestPlan) return { lat: 35.681236, lng: 139.767125 }; // fallback
-
-    const city = allCities.find((c) => c.id === nearestPlan.country);
-    if (!city) return { lat: 35.681236, lng: 139.767125 };
-
-    return { lat: city.lat, lng: city.lng };
-  })();
+  useEffect(() => {
+    refreshRouteForSelectedDay();
+  }, [nearestPlan, selectedDayIndex, routeTrigger]);
 
   return (
     <div className="flex h-full flex-col">
@@ -74,8 +112,27 @@ export default function Page() {
             </div>
 
             <div className="w-full py-2">
-              <GoogleMap className="h-[200px] w-full" center={mapCenter} />
-              <PlanDayList days={days} planId={nearestPlan.plan_id} />
+              <GoogleMap
+                className="h-[200px] w-full"
+                center={mapCenter}
+                markers={mapPlaces.map((p) => ({
+                  id: p.place_id,
+                  lat: p.latitude,
+                  lng: p.longitude,
+                  title: p.title,
+                  order: p.order_index,
+                }))}
+              />
+
+              <PlanDayList
+                days={days}
+                planId={nearestPlan.plan_id}
+                onViewRoute={(dayIndex) => {
+                  setSelectedDayIndex(dayIndex);
+                  setRouteTrigger((v) => v + 1);
+                }}
+                onRouteDataChanged={refreshRouteForSelectedDay}
+              />
             </div>
           </>
         ) : (

@@ -39,7 +39,7 @@ export default function CommonCard({ post }: { post: CommonPost }) {
           {hashtags && <div className="text-medium13 line-clamp-1 pt-4 text-[#5364FF]">{hashtags}</div>}
 
           <div className="text-regular12 pt-1 pb-3 text-[#c4c4c4]">
-            {post.users.nickname} • {new Date(post.created_at).toLocaleDateString()}
+            {post.users.nickname} • {new Date(post.created_at).toLocaleDateString('ko-KR')}
           </div>
         </div>
 
