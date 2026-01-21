@@ -29,14 +29,11 @@ export default function Page() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
 
-  const today = new Date();
-
   const futurePlans = plans
-    .filter((plan) => new Date(plan.start_date) >= today)
+    .filter((plan) => new Date(plan.start_date) >= new Date())
     .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
   const nearestPlan = futurePlans[0];
-
   const days = nearestPlan ? getTravelDays(nearestPlan.start_date, nearestPlan.end_date) : [];
 
   const mapCenter = (() => {
@@ -50,6 +47,8 @@ export default function Page() {
 
   const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null);
   const [mapPlaces, setMapPlaces] = useState<MapPlace[]>([]);
+
+  const [routeTrigger, setRouteTrigger] = useState(0);
 
   const refreshRouteForSelectedDay = async () => {
     if (!nearestPlan || selectedDayIndex === null) {
@@ -82,8 +81,14 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
+    if (!nearestPlan || days.length === 0) return;
+
+    setSelectedDayIndex(1);
+  }, [nearestPlan]);
+
+  useEffect(() => {
     refreshRouteForSelectedDay();
-  }, [nearestPlan, selectedDayIndex]);
+  }, [nearestPlan, selectedDayIndex, routeTrigger]);
 
   return (
     <div className="flex h-full flex-col">
@@ -108,7 +113,6 @@ export default function Page() {
 
             <div className="w-full py-2">
               <GoogleMap
-                key={`${selectedDayIndex}-${mapPlaces.length}`}
                 className="h-[200px] w-full"
                 center={mapCenter}
                 markers={mapPlaces.map((p) => ({
@@ -125,6 +129,7 @@ export default function Page() {
                 planId={nearestPlan.plan_id}
                 onViewRoute={(dayIndex) => {
                   setSelectedDayIndex(dayIndex);
+                  setRouteTrigger((v) => v + 1);
                 }}
                 onRouteDataChanged={refreshRouteForSelectedDay}
               />
