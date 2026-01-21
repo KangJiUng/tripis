@@ -26,9 +26,11 @@ interface DayWithPlaces {
 interface Props {
   days: Date[];
   planId: string;
+  onViewRoute?: (dayIndex: number) => void;
+  onRouteDataChanged?: () => void;
 }
 
-export default function PlanDayList({ days, planId }: Props) {
+export default function PlanDayList({ days, planId, onViewRoute, onRouteDataChanged }: Props) {
   const router = useRouter();
   const [dayData, setDayData] = useState<DayWithPlaces[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,6 +83,8 @@ export default function PlanDayList({ days, planId }: Props) {
     }
     await fetchDays();
     setSelectionByDay({});
+
+    onRouteDataChanged?.();
   };
 
   if (loading) {
@@ -242,6 +246,7 @@ export default function PlanDayList({ days, planId }: Props) {
                 onMoved={fetchDays}
                 isEditing={isEditing}
                 onSelectionChange={handleSelectionChange}
+                onViewRoute={() => onViewRoute?.(dayIndex)}
               />
             );
           })}

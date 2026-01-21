@@ -16,24 +16,20 @@ type Plan = {
   end_date: string;
 };
 
+type MapPlace = {
+  place_id: string;
+  title: string;
+  latitude: number;
+  longitude: number;
+  order_index: number;
+};
+
 export default function Page() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
 
   const today = new Date();
-
-  useEffect(() => {
-    const fetchPlans = async () => {
-      const res = await fetch('/api/plans');
-      if (!res.ok) return;
-
-      const data = await res.json();
-      setPlans(data.plans ?? []);
-    };
-
-    fetchPlans();
-  }, []);
 
   const futurePlans = plans
     .filter((plan) => new Date(plan.start_date) >= today)
@@ -51,6 +47,43 @@ export default function Page() {
 
     return { lat: city.lat, lng: city.lng };
   })();
+
+  const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null);
+  const [mapPlaces, setMapPlaces] = useState<MapPlace[]>([]);
+
+  const refreshRouteForSelectedDay = async () => {
+    if (!nearestPlan || selectedDayIndex === null) {
+      setMapPlaces([]);
+      return;
+    }
+
+    const res = await fetch(`/api/plans/${nearestPlan.plan_id}/days`);
+    if (!res.ok) {
+      setMapPlaces([]);
+      return;
+    }
+
+    const data = await res.json();
+    const day = data.days.find((d: any) => d.day_index === selectedDayIndex);
+
+    setMapPlaces(day?.places ?? []);
+  };
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const res = await fetch('/api/plans');
+      if (!res.ok) return;
+
+      const data = await res.json();
+      setPlans(data.plans ?? []);
+    };
+
+    fetchPlans();
+  }, []);
+
+  useEffect(() => {
+    refreshRouteForSelectedDay();
+  }, [nearestPlan, selectedDayIndex]);
 
   return (
     <div className="flex h-full flex-col">
@@ -74,8 +107,27 @@ export default function Page() {
             </div>
 
             <div className="w-full py-2">
-              <GoogleMap className="h-[200px] w-full" center={mapCenter} />
-              <PlanDayList days={days} planId={nearestPlan.plan_id} />
+              <GoogleMap
+                key={`${selectedDayIndex}-${mapPlaces.length}`}
+                className="h-[200px] w-full"
+                center={mapCenter}
+                markers={mapPlaces.map((p) => ({
+                  id: p.place_id,
+                  lat: p.latitude,
+                  lng: p.longitude,
+                  title: p.title,
+                  order: p.order_index,
+                }))}
+              />
+
+              <PlanDayList
+                days={days}
+                planId={nearestPlan.plan_id}
+                onViewRoute={(dayIndex) => {
+                  setSelectedDayIndex(dayIndex);
+                }}
+                onRouteDataChanged={refreshRouteForSelectedDay}
+              />
             </div>
           </>
         ) : (
