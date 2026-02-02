@@ -66,7 +66,7 @@ export default function ReviewPlanEditor({ planId }: Props) {
   };
 
   if (loading) {
-    return <div className="py-6 text-center text-gray-400">일정을 불러오는 중...</div>;
+    return <div className="text-regular14 py-6 text-center text-gray-400">일정을 불러오는 중...</div>;
   }
 
   return (
