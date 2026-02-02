@@ -85,6 +85,15 @@ export default function PlanDay({
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
+  const handleViewRoute = () => {
+    if (places.length === 0) {
+      alert('등록된 장소가 없어요. 장소를 추가해주세요.');
+      return;
+    }
+
+    onViewRoute?.();
+  };
+
   // 선택 변경 부모로 전달
   useEffect(() => {
     onSelectionChange?.(dayIndex, selectedIds);
@@ -105,7 +114,7 @@ export default function PlanDay({
           </span>
         </h3>
 
-        <button onClick={onViewRoute} className="text-medium13 cursor-pointer text-[#6B5CFF]">
+        <button onClick={handleViewRoute} className="text-medium13 cursor-pointer text-[#6B5CFF]">
           동선보기
         </button>
       </div>
