@@ -217,7 +217,17 @@ export default function Page() {
 
       <div className="fixed bottom-0 left-0 w-full">
         <div className="mx-auto max-w-[600px]">
-          <SubmitButton disabled={!isFormValid} onClick={handleSubmit} />
+          <SubmitButton
+            disabled={!isFormValid}
+            allowClickWhenDisabled
+            onClick={() => {
+              if (!isFormValid) {
+                alert('필수 항목을 모두 입력해주세요.');
+                return;
+              }
+              handleSubmit();
+            }}
+          />
         </div>
       </div>
 

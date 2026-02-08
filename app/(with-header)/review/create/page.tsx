@@ -1,31 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import WriteHeader from '@/components/headers/write-header';
 import SubmitButton from '@/components/buttons/submit-button';
 import ReviewPlanEditor from '@/components/review/review-plan-editor';
 import CloseIcon from '@/icons/close-icon';
 import HorizontalScroll from '@/components/horizontal-scroll';
+import ReplayIcon from '@/icons/replay-icon';
 
 export default function Page() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const isFormValid = title.trim() && content.trim() && images.length > 0;
 
-  const handleLoadPlan = async () => {
-    const res = await fetch('/api/plans');
-    if (!res.ok) return;
-
-    const data = await res.json();
-
-    if (!data.plans || data.plans.length === 0) {
-      alert('불러올 여행 일정이 없어요.');
-      return;
-    }
-
-    setSelectedPlanId(data.plans[0].plan_id);
-  };
+  useEffect(() => {
+    const planId = searchParams.get('planId');
+    setSelectedPlanId(planId);
+  }, [searchParams]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -100,20 +96,28 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex gap-3">
-          <button className="text-regular13 cursor-pointer rounded-full border px-2 py-1.5" onClick={handleLoadPlan}>
-            일정 불러오기
-          </button>
-
-          <button className="text-regular13 cursor-pointer rounded-full border px-2 py-1.5">일정 직접 등록</button>
-        </div>
+        <button
+          className="text-regular13 flex items-center gap-1 py-1.5 text-[#5364FF]"
+          onClick={() => router.push('/review/create/select-plan')}
+        >
+          <ReplayIcon fill="#5364FF" />
+          <span>일정 다시 불러오기</span>
+        </button>
 
         {selectedPlanId && <ReviewPlanEditor planId={selectedPlanId} />}
       </div>
 
       <div className="fixed bottom-0 left-0 w-full bg-white">
         <div className="mx-auto max-w-[600px]">
-          <SubmitButton />
+          <SubmitButton
+            disabled={!isFormValid}
+            allowClickWhenDisabled
+            onClick={() => {
+              if (!isFormValid) {
+                alert('제목, 내용, 이미지를 모두 입력해주세요.');
+              }
+            }}
+          />
         </div>
       </div>
     </div>
