@@ -85,7 +85,7 @@ export default function Page() {
       <FeedSearchBar value={query} onChange={setQuery} />
 
       {activeTab === '리뷰' && (
-        <div className="text-bold12 flex gap-1.5 pt-4">
+        <div className="text-semi-bold12 flex gap-1.5 pt-4">
           <button>• 추천순</button>
           <button>• 최신순</button>
         </div>

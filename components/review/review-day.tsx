@@ -17,7 +17,7 @@ interface Props {
 export default function ReviewDay({ day, onChangeContent }: Props) {
   return (
     <section>
-      <h3 className="text-bold16 mb-3 flex items-center gap-2">
+      <h3 className="text-semi-bold16 mb-3 flex items-center gap-2">
         DAY {day.dayIndex}
         <span className="text-regular13 text-gray-400">{day.dateLabel}</span>
       </h3>

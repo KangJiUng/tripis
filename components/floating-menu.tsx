@@ -15,7 +15,7 @@ export default function FloatingMenu({ open, onClose }: FloatingMenuProps) {
 
   const goToReview = () => {
     onClose();
-    router.push('/review/create');
+    router.push('/review/create/select-plan');
   };
 
   const goToPost = () => {

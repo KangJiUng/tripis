@@ -58,7 +58,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         </div>
       </div>
 
-      <h1 className="text-bold18 px-2 pt-4 text-black">{post.title}</h1>
+      <h1 className="text-semi-bold18 px-2 pt-4 text-black">{post.title}</h1>
 
       <p className="text-regular13 px-2 pt-3 leading-relaxed whitespace-pre-wrap text-gray-700">{post.content}</p>
 
@@ -73,7 +73,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       )}
 
       <div className="text-regular12 px-1 pt-8 text-right text-gray-400">
-        {new Date(post.created_at).toLocaleDateString()}
+        {new Date(post.created_at).toLocaleDateString('ko-KR')}
       </div>
 
       <div className="-mx-[15px] mt-6 h-2 bg-gray-100" />
