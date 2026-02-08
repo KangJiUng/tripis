@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import WriteHeader from '@/components/headers/write-header';
 import SubmitButton from '@/components/buttons/submit-button';
@@ -9,7 +9,7 @@ import CloseIcon from '@/icons/close-icon';
 import HorizontalScroll from '@/components/horizontal-scroll';
 import ReplayIcon from '@/icons/replay-icon';
 
-export default function Page() {
+function ReviewCreatePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
@@ -121,5 +121,13 @@ export default function Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <ReviewCreatePage />
+    </Suspense>
   );
 }
