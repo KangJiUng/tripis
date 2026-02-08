@@ -115,34 +115,46 @@ html {
     font-weight: 500;
   }
 
-  .text-bold12 {
+  .text-semi-bold12 {
     font-family: 'Pretendard Variable';
     font-size: 12px;
     font-weight: 600;
   }
 
-  .text-bold14 {
+  .text-semi-bold14 {
     font-family: 'Pretendard Variable';
     font-size: 14px;
     font-weight: 600;
   }
 
-  .text-bold15 {
+  .text-semi-bold15 {
     font-family: 'Pretendard Variable';
     font-size: 15px;
     font-weight: 600;
   }
 
-  .text-bold16 {
+  .text-semi-bold16 {
     font-family: 'Pretendard Variable';
     font-size: 16px;
     font-weight: 600;
   }
 
-  .text-bold18 {
+  .text-semi-bold18 {
     font-family: 'Pretendard Variable';
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
+  }
+
+  .text-semi-bold20 {
+    font-family: 'Pretendard Variable';
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .text-semi-bold24 {
+    font-family: 'Pretendard Variable';
+    font-size: 24px;
+    font-weight: 600;
   }
 
   .text-bold20 {
