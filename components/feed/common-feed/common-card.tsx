@@ -32,7 +32,7 @@ export default function CommonCard({ post }: { post: CommonPost }) {
     <Link href={`/post/${post.post_id}`} className="block">
       <div className="mt-3 flex w-full cursor-pointer">
         <div className="flex-1 pr-4">
-          <div className="text-bold16 py-1">{post.title}</div>
+          <div className="text-semi-bold16 py-1">{post.title}</div>
 
           <div className="text-regular13 line-clamp-1 h-5 overflow-hidden text-ellipsis">{post.content}</div>
 

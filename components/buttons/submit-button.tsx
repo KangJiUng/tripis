@@ -3,6 +3,7 @@ interface SubmitButtonProps {
   disabled?: boolean;
   onClick?: () => void;
   type?: 'button' | 'submit';
+  allowClickWhenDisabled?: boolean;
 }
 
 export default function SubmitButton({
@@ -10,11 +11,15 @@ export default function SubmitButton({
   disabled = false,
   onClick,
   type = 'button',
+  allowClickWhenDisabled = false,
 }: SubmitButtonProps) {
+  const isBlocked = disabled && !allowClickWhenDisabled;
+
   return (
     <button
       type={type}
-      disabled={disabled}
+      disabled={isBlocked}
+      aria-disabled={disabled}
       onClick={onClick}
       className={`text-regular14 h-12 w-full cursor-pointer transition ${disabled ? 'bg-gray-300 text-white' : 'bg-[#5364FF] text-white'} `}
     >

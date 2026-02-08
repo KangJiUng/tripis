@@ -56,7 +56,7 @@ export default function CountryList({ onChangeSelected }: Props) {
       <div className="mt-3 space-y-6">
         {isSearching ? (
           <div>
-            <div className="text-bold14 px- mb-2 px-2">검색 결과</div>
+            <div className="text-semi-bold14 px- mb-2 px-2">검색 결과</div>
 
             <ul className="flex flex-col gap-2">
               {visibleCities.map((city) => {
@@ -96,7 +96,7 @@ export default function CountryList({ onChangeSelected }: Props) {
 
                 return (
                   <div key={tab.key}>
-                    <div className="text-bold14 mt-5 mb-2 px-2">{tab.label}</div>
+                    <div className="text-semi-bold14 mt-5 mb-2 px-2">{tab.label}</div>
 
                     <ul className="flex flex-col gap-2">
                       {list.map((city) => {
