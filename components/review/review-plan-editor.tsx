@@ -9,6 +9,7 @@ interface ReviewPlace {
 }
 
 interface ReviewDayData {
+  dayId: string;
   dayIndex: number;
   dateLabel: string;
   places: ReviewPlace[];
@@ -17,6 +18,7 @@ interface ReviewDayData {
 
 interface Props {
   planId: string;
+  onChangeDays?: (days: { dayId: string; dayIndex: number; content: string }[]) => void;
 }
 
 const formatDate = (date: Date) => {
@@ -27,7 +29,7 @@ const formatDate = (date: Date) => {
   return `${year}.${month}.${day} (${week})`;
 };
 
-export default function ReviewPlanEditor({ planId }: Props) {
+export default function ReviewPlanEditor({ planId, onChangeDays }: Props) {
   const [days, setDays] = useState<ReviewDayData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,6 +46,7 @@ export default function ReviewPlanEditor({ planId }: Props) {
         date.setDate(date.getDate() + (day.day_index - 1));
 
         return {
+          dayId: day.day_id,
           dayIndex: day.day_index,
           dateLabel: formatDate(date),
           places: day.places.map((p: any) => ({
@@ -64,6 +67,11 @@ export default function ReviewPlanEditor({ planId }: Props) {
   const updateDayContent = (dayIndex: number, content: string) => {
     setDays((prev) => prev.map((d) => (d.dayIndex === dayIndex ? { ...d, content } : d)));
   };
+
+  useEffect(() => {
+    if (!onChangeDays) return;
+    onChangeDays(days.map((day) => ({ dayId: day.dayId, dayIndex: day.dayIndex, content: day.content })));
+  }, [days, onChangeDays]);
 
   if (loading) {
     return <div className="text-regular14 py-6 text-center text-gray-400">일정을 불러오는 중...</div>;
