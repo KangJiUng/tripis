@@ -16,7 +16,52 @@ function ReviewCreatePage() {
   const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const isFormValid = title.trim() && content.trim() && images.length > 0;
+  const [dayReviews, setDayReviews] = useState<{ dayId: string; dayIndex: number; content: string }[]>([]);
+  const isFormValid = selectedPlanId && title.trim() && content.trim() && images.length > 0;
+
+  const handleSubmit = async () => {
+    if (!isFormValid || !selectedPlanId) {
+      alert('제목, 내용, 이미지, 일정을 모두 입력해주세요.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('plan_id', selectedPlanId);
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append(
+      'day_reviews',
+      JSON.stringify(
+        dayReviews.map((day) => ({
+          day_id: day.dayId,
+          day_index: day.dayIndex,
+          content: day.content,
+        })),
+      ),
+    );
+
+    images.forEach((img) => {
+      formData.append('images', img);
+    });
+
+    const res = await fetch('/api/reviews', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      alert('리뷰 작성 실패');
+      return;
+    }
+
+    const data = await res.json();
+    alert('리뷰가 성공적으로 작성되었습니다!');
+    if (data.review?.review_id) {
+      router.push(`/review/${data.review.review_id}`);
+      return;
+    }
+    router.push('/');
+  };
 
   useEffect(() => {
     const planId = searchParams.get('planId');
@@ -104,20 +149,12 @@ function ReviewCreatePage() {
           <span>일정 다시 불러오기</span>
         </button>
 
-        {selectedPlanId && <ReviewPlanEditor planId={selectedPlanId} />}
+        {selectedPlanId && <ReviewPlanEditor planId={selectedPlanId} onChangeDays={setDayReviews} />}
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white">
+      <div className="fixed bottom-0 left-0 w-full">
         <div className="mx-auto max-w-[600px]">
-          <SubmitButton
-            disabled={!isFormValid}
-            allowClickWhenDisabled
-            onClick={() => {
-              if (!isFormValid) {
-                alert('제목, 내용, 이미지를 모두 입력해주세요.');
-              }
-            }}
-          />
+          <SubmitButton disabled={!isFormValid} allowClickWhenDisabled onClick={handleSubmit} />
         </div>
       </div>
     </div>
