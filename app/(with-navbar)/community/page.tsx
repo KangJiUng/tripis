@@ -7,6 +7,7 @@ import FeedSearchBar from '@/components/searchbars/feed-searchbar';
 import CommonCard from '@/components/feed/common-feed/common-card';
 
 type TabType = '리뷰' | '질문' | '도움요청' | '여행톡';
+type ReviewSort = 'latest' | 'likes';
 
 type Post = {
   post_id: string;
@@ -24,44 +25,78 @@ type Post = {
   };
 };
 
+type Review = {
+  review_id: string;
+  title: string;
+  content: string;
+  image_urls: string[];
+  like_count: number;
+  comment_count: number;
+  created_at: string;
+  users: {
+    nickname: string;
+    profile_image_url: string | null;
+  } | null;
+  travel_plan: {
+    title: string;
+    country: string;
+    start_date: string;
+    end_date: string;
+  } | null;
+};
+
 export default function Page() {
   const [activeTab, setActiveTab] = useState<TabType>('리뷰');
+  const [reviewSort, setReviewSort] = useState<ReviewSort>('latest');
   const [posts, setPosts] = useState<Post[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
-    if (activeTab === '리뷰') return;
-
     const fetchPosts = async () => {
       setLoading(true);
 
       try {
         const url =
-          query.trim().length > 0
-            ? `/api/search/feed?query=${encodeURIComponent(query)}&type=${activeTab}`
-            : `/api/posts?type=${activeTab}`;
+          activeTab === '리뷰'
+            ? `/api/reviews?sort=${reviewSort}${query.trim() ? `&query=${encodeURIComponent(query)}` : ''}`
+            : query.trim().length > 0
+              ? `/api/search/feed?query=${encodeURIComponent(query)}&type=${activeTab}`
+              : `/api/posts?type=${activeTab}`;
 
         const res = await fetch(url);
         const data = await res.json();
 
         if (!res.ok) {
           console.error(data.error);
-          setPosts([]);
+          if (activeTab === '리뷰') {
+            setReviews([]);
+          } else {
+            setPosts([]);
+          }
           return;
         }
 
-        setPosts(data.posts ?? []);
+        if (activeTab === '리뷰') {
+          setReviews(data.reviews ?? []);
+        } else {
+          setPosts(data.posts ?? []);
+        }
       } catch (e) {
         console.error('fetch posts error', e);
-        setPosts([]);
+        if (activeTab === '리뷰') {
+          setReviews([]);
+        } else {
+          setPosts([]);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchPosts();
-  }, [activeTab, query]);
+  }, [activeTab, query, reviewSort]);
 
   return (
     <div className="min-h-screen bg-white px-2">
@@ -86,8 +121,15 @@ export default function Page() {
 
       {activeTab === '리뷰' && (
         <div className="text-semi-bold12 flex gap-1.5 pt-4">
-          <button>• 추천순</button>
-          <button>• 최신순</button>
+          <button onClick={() => setReviewSort('likes')} className={reviewSort === 'likes' ? 'text-black' : 'text-gray-400'}>
+            • 추천순
+          </button>
+          <button
+            onClick={() => setReviewSort('latest')}
+            className={reviewSort === 'latest' ? 'text-black' : 'text-gray-400'}
+          >
+            • 최신순
+          </button>
         </div>
       )}
 
@@ -95,12 +137,19 @@ export default function Page() {
       <div className="space-y-4">
         {activeTab === '리뷰' && (
           <section>
-            {[...Array(5)].map((_, idx) => (
-              <div key={idx}>
-                <ReviewCard />
-                {idx < 4 && <div className="border-b border-[#ececec]" />}
+            {loading && <div className="text-regular13 pt-10 text-center text-gray-300">불러오는 중...</div>}
+            {!loading && reviews.length === 0 && (
+              <div className="text-regular13 pt-10 text-center text-gray-300">
+                {query.trim() ? '찾는 리뷰가 없어요.' : '아직 리뷰가 없어요.'}
               </div>
-            ))}
+            )}
+            {!loading &&
+              reviews.map((review, idx) => (
+                <div key={review.review_id}>
+                  <ReviewCard review={review} />
+                  {idx < reviews.length - 1 && <div className="border-b border-[#ececec]" />}
+                </div>
+              ))}
           </section>
         )}
 
