@@ -121,3 +121,68 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function GET(req: Request) {
+  const supabase = await createSupabaseServer();
+  const { searchParams } = new URL(req.url);
+
+  const query = searchParams.get('query')?.trim();
+  const sort = searchParams.get('sort') === 'likes' ? 'likes' : 'latest';
+
+  let dbQuery = supabase
+    .from('review')
+    .select(
+      `
+      review_id,
+      user_id,
+      plan_id,
+      title,
+      content,
+      image_urls,
+      like_count,
+      comment_count,
+      created_at
+      `,
+    )
+    .order(sort === 'likes' ? 'like_count' : 'created_at', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (query) {
+    dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`);
+  }
+
+  const { data: reviews, error } = await dbQuery;
+
+  if (error) {
+    console.error('GET /api/reviews error:', error);
+    return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
+  }
+
+  if (!reviews || reviews.length === 0) {
+    return NextResponse.json({ reviews: [] });
+  }
+
+  const userIds = Array.from(new Set(reviews.map((r) => r.user_id)));
+  const planIds = Array.from(new Set(reviews.map((r) => r.plan_id)));
+
+  const [{ data: users, error: usersError }, { data: plans, error: plansError }] = await Promise.all([
+    supabase.from('users').select('id, nickname, profile_image_url').in('id', userIds),
+    supabase.from('travel_plan').select('plan_id, title, country, start_date, end_date').in('plan_id', planIds),
+  ]);
+
+  if (usersError || plansError) {
+    console.error('GET /api/reviews relation fetch error:', usersError ?? plansError);
+    return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
+  }
+
+  const userMap = new Map((users ?? []).map((u) => [u.id, u]));
+  const planMap = new Map((plans ?? []).map((p) => [p.plan_id, p]));
+
+  const mergedReviews = reviews.map((review) => ({
+    ...review,
+    users: userMap.get(review.user_id) ?? null,
+    travel_plan: planMap.get(review.plan_id) ?? null,
+  }));
+
+  return NextResponse.json({ reviews: mergedReviews });
+}
