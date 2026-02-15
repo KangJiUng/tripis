@@ -26,13 +26,14 @@ export default function DateSelector() {
 
     const city = allCities.find((c) => c.id === country);
     const title = city ? `${city.name} 여행` : '여행';
+    const countryName = city?.name ?? country;
 
     const res = await fetch('/api/plans', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title,
-        country,
+        country: countryName,
         startDate: startDate.toISOString().slice(0, 10),
         endDate: finalEndDate.toISOString().slice(0, 10),
       }),
