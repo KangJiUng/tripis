@@ -33,15 +33,12 @@ type Review = {
   like_count: number;
   comment_count: number;
   created_at: string;
+  plan_country: string | null;
+  plan_start_date: string | null;
+  plan_end_date: string | null;
   users: {
     nickname: string;
     profile_image_url: string | null;
-  } | null;
-  travel_plan: {
-    title: string;
-    country: string;
-    start_date: string;
-    end_date: string;
   } | null;
 };
 

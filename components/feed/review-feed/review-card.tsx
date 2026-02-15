@@ -12,14 +12,12 @@ type ReviewCardProps = {
     like_count: number;
     comment_count: number;
     created_at: string;
+    plan_country: string | null;
+    plan_start_date: string | null;
+    plan_end_date: string | null;
     users: {
       nickname: string;
       profile_image_url: string | null;
-    } | null;
-    travel_plan: {
-      title: string;
-      start_date: string;
-      end_date: string;
     } | null;
   };
 };
@@ -34,8 +32,8 @@ const formatPlanDate = (startDate?: string, endDate?: string) => {
 };
 
 export default function ReviewCard({ review }: ReviewCardProps) {
-  const profileText = review.travel_plan
-    ? `${review.travel_plan.title} · ${formatPlanDate(review.travel_plan.start_date, review.travel_plan.end_date)}`
+  const profileText = review.plan_country
+    ? `${review.plan_country} 여행 · ${formatPlanDate(review.plan_start_date ?? undefined, review.plan_end_date ?? undefined)}`
     : '';
 
   return (

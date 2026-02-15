@@ -36,6 +36,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Max 10 images' }, { status: 400 });
     }
 
+    const { data: plan, error: planError } = await supabase
+      .from('travel_plan')
+      .select('country, start_date, end_date')
+      .eq('plan_id', plan_id)
+      .single();
+
+    if (planError || !plan) {
+      return NextResponse.json({ error: 'Invalid plan_id' }, { status: 400 });
+    }
+
     let dayReviews: DayReviewPayload[] = [];
     try {
       dayReviews = JSON.parse(day_reviews_raw) as DayReviewPayload[];
@@ -55,6 +65,9 @@ export async function POST(req: Request) {
       .insert({
         user_id: user.id,
         plan_id,
+        plan_country: plan.country,
+        plan_start_date: plan.start_date,
+        plan_end_date: plan.end_date,
         title,
         content,
         image_urls: [],
@@ -136,6 +149,9 @@ export async function GET(req: Request) {
       review_id,
       user_id,
       plan_id,
+      plan_country,
+      plan_start_date,
+      plan_end_date,
       title,
       content,
       image_urls,
@@ -163,25 +179,22 @@ export async function GET(req: Request) {
   }
 
   const userIds = Array.from(new Set(reviews.map((r) => r.user_id)));
-  const planIds = Array.from(new Set(reviews.map((r) => r.plan_id)));
 
-  const [{ data: users, error: usersError }, { data: plans, error: plansError }] = await Promise.all([
-    supabase.from('users').select('id, nickname, profile_image_url').in('id', userIds),
-    supabase.from('travel_plan').select('plan_id, title, country, start_date, end_date').in('plan_id', planIds),
-  ]);
+  const { data: users, error: usersError } = await supabase
+    .from('users')
+    .select('id, nickname, profile_image_url')
+    .in('id', userIds);
 
-  if (usersError || plansError) {
-    console.error('GET /api/reviews relation fetch error:', usersError ?? plansError);
+  if (usersError) {
+    console.error('GET /api/reviews relation fetch error:', usersError);
     return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
   }
 
   const userMap = new Map((users ?? []).map((u) => [u.id, u]));
-  const planMap = new Map((plans ?? []).map((p) => [p.plan_id, p]));
 
   const mergedReviews = reviews.map((review) => ({
     ...review,
     users: userMap.get(review.user_id) ?? null,
-    travel_plan: planMap.get(review.plan_id) ?? null,
   }));
 
   return NextResponse.json({ reviews: mergedReviews });
