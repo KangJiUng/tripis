@@ -28,12 +28,13 @@ export default function FloatingMenu({ open, onClose }: FloatingMenuProps) {
       {open && (
         <>
           <motion.div
-            className="fixed inset-0 z-40 bg-black/20"
-            onClick={onClose}
+            className="fixed inset-0 z-40 flex justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-          />
+          >
+            <div className="h-full w-full max-w-[600px] bg-black/20" onClick={onClose} />
+          </motion.div>
 
           <motion.div
             className="fixed bottom-16 left-1/2 z-50 flex -translate-x-1/2 flex-col items-start gap-3 rounded-xl bg-[#4d4d4d] px-4 py-3 text-white shadow-lg"

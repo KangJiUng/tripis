@@ -17,50 +17,58 @@ function ReviewCreatePage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [dayReviews, setDayReviews] = useState<{ dayId: string; dayIndex: number; content: string }[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isFormValid = selectedPlanId && title.trim() && content.trim() && images.length > 0;
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+
     if (!isFormValid || !selectedPlanId) {
       alert('제목, 내용, 이미지, 일정을 모두 입력해주세요.');
       return;
     }
 
-    const formData = new FormData();
-    formData.append('plan_id', selectedPlanId);
-    formData.append('title', title);
-    formData.append('content', content);
-    formData.append(
-      'day_reviews',
-      JSON.stringify(
-        dayReviews.map((day) => ({
-          day_id: day.dayId,
-          day_index: day.dayIndex,
-          content: day.content,
-        })),
-      ),
-    );
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('plan_id', selectedPlanId);
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append(
+        'day_reviews',
+        JSON.stringify(
+          dayReviews.map((day) => ({
+            day_id: day.dayId,
+            day_index: day.dayIndex,
+            content: day.content,
+          })),
+        ),
+      );
 
-    images.forEach((img) => {
-      formData.append('images', img);
-    });
+      images.forEach((img) => {
+        formData.append('images', img);
+      });
 
-    const res = await fetch('/api/reviews', {
-      method: 'POST',
-      body: formData,
-    });
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        body: formData,
+      });
 
-    if (!res.ok) {
-      alert('리뷰 작성 실패');
-      return;
+      if (!res.ok) {
+        alert('리뷰 작성 실패');
+        return;
+      }
+
+      const data = await res.json();
+      alert('리뷰가 성공적으로 작성되었습니다!');
+      if (data.review?.review_id) {
+        router.push(`/review/${data.review.review_id}`);
+        return;
+      }
+      router.push('/');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const data = await res.json();
-    alert('리뷰가 성공적으로 작성되었습니다!');
-    if (data.review?.review_id) {
-      router.push(`/review/${data.review.review_id}`);
-      return;
-    }
-    router.push('/');
   };
 
   useEffect(() => {
@@ -154,7 +162,12 @@ function ReviewCreatePage() {
 
       <div className="fixed bottom-0 left-0 w-full">
         <div className="mx-auto max-w-[600px]">
-          <SubmitButton disabled={!isFormValid} allowClickWhenDisabled onClick={handleSubmit} />
+          <SubmitButton
+            text={isSubmitting ? '업로드중입니다...' : '작성 완료'}
+            disabled={!isFormValid || isSubmitting}
+            allowClickWhenDisabled={!isSubmitting}
+            onClick={handleSubmit}
+          />
         </div>
       </div>
     </div>

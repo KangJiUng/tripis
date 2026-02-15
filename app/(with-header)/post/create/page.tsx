@@ -23,6 +23,7 @@ export default function Page() {
   const [content, setContent] = useState<string>('');
   const [isCountryModalOpen, setIsCountryModalOpen] = useState<boolean>(false);
   const [images, setImages] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
   const { user } = useUserStore();
 
@@ -36,40 +37,46 @@ export default function Page() {
   };
 
   async function handleSubmit() {
+    if (isSubmitting) return;
     if (!isFormValid) return;
     if (!user) {
       alert('로그인이 필요합니다.');
       return;
     }
-    const formData = new FormData();
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
 
-    formData.append('post_type', selectedCategory);
-    formData.append('title', title);
-    formData.append('content', content);
+      formData.append('post_type', selectedCategory);
+      formData.append('title', title);
+      formData.append('content', content);
 
-    selectedCountries.forEach((country) => {
-      formData.append('countries', country.name);
-    });
+      selectedCountries.forEach((country) => {
+        formData.append('countries', country.name);
+      });
 
-    if (selectedTopic) {
-      formData.append('tags', selectedTopic);
+      if (selectedTopic) {
+        formData.append('tags', selectedTopic);
+      }
+
+      images.forEach((img) => {
+        formData.append('images', img);
+      });
+
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        alert('게시글 작성 실패');
+        return;
+      }
+      alert('게시글이 성공적으로 작성되었습니다!');
+      router.push('/');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    images.forEach((img) => {
-      formData.append('images', img);
-    });
-
-    const res = await fetch('/api/posts', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!res.ok) {
-      alert('게시글 작성 실패');
-      return;
-    }
-    alert('게시글이 성공적으로 작성되었습니다!');
-    router.push('/');
   }
 
   return (
@@ -218,9 +225,11 @@ export default function Page() {
       <div className="fixed bottom-0 left-0 w-full">
         <div className="mx-auto max-w-[600px]">
           <SubmitButton
-            disabled={!isFormValid}
-            allowClickWhenDisabled
+            text={isSubmitting ? '업로드중입니다...' : '작성 완료'}
+            disabled={!isFormValid || isSubmitting}
+            allowClickWhenDisabled={!isSubmitting}
             onClick={() => {
+              if (isSubmitting) return;
               if (!isFormValid) {
                 alert('필수 항목을 모두 입력해주세요.');
                 return;

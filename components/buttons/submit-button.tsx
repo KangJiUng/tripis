@@ -21,7 +21,9 @@ export default function SubmitButton({
       disabled={isBlocked}
       aria-disabled={disabled}
       onClick={onClick}
-      className={`text-regular14 h-12 w-full cursor-pointer transition ${disabled ? 'bg-gray-300 text-white' : 'bg-[#5364FF] text-white'} `}
+      className={`text-regular14 h-12 w-full transition ${
+        disabled ? 'bg-gray-300 text-white' : 'cursor-pointer bg-[#5364FF] text-white'
+      } `}
     >
       {text}
     </button>
